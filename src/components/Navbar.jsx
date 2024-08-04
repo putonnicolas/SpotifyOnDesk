@@ -1,7 +1,9 @@
 import { useEffect, useState }from 'react';
 import { navLists, dimensionList } from '../constants';
+import ToggleButton from './ToggleButton.jsx'
 
-const Navbar = () => {
+
+const Navbar = ({onToggle}) => {
 
   const [currentDimension, setcurrentDimension] = useState(2)
 
@@ -18,17 +20,12 @@ const Navbar = () => {
             ))}
           </div>
           <div className="flex-grow"></div>
-          <button className="dimension-btn-container">
-            {
-              dimensionList.map(({ label, value }) => (
-                <span key={label} className="dimenstion-btn" style={{ backgroundColor: currentDimension === value ? 'white' : 'transparent', color: currentDimension === value ? 'black' : 'white'}} onClick={() => setcurrentDimension(value)}>
-                  {label}
-                </span>   
-              ))}
-          </button>
+          <ToggleButton onToggle={onToggle}/>
         </nav>
       </header>
-      <hr className="fade-out-hr" />
+      <div className=" mb-5 pr-10 pl-10 w-full flex flex-col items-center">
+        <div className="relative w-full h-0.5 bg-gradient-to-r from-transparent via-white to-transparent rounded-full"/>
+     </div>
     </>
   );
 };

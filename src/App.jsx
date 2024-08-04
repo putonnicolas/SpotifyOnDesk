@@ -1,17 +1,19 @@
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useState, useRef } from 'react';
 import LoginSpotify from './components/LoginSpotify';
 import axios from 'axios';
 import Player from './components/Player';
-import { BackgroundProvider, useBackground } from './context/BackgroundContext.jsx';
+import { BackgroundProvider, useBackground } from './context/BackgroundContext';
+import { gsap } from 'gsap';
 
 const App = () => {
   const [token, setToken] = useState(null);
   const [userData, setUserData] = useState(null);
-  const { backgroundColor } = useBackground(); // Obtenir la couleur de fond depuis le contexte
+  const { backgroundColor } = useBackground(); 
+  const backgroundRef = useRef(null); 
 
-  const handleLogin = (accessToken) => {    
+  const handleLogin = (accessToken) => {
     setToken(accessToken);
-    localStorage.setItem('spotifyAccessToken', accessToken); 
+    localStorage.setItem('spotifyAccessToken', accessToken);
   };
 
   useEffect(() => {
@@ -22,7 +24,7 @@ const App = () => {
   }, []);
 
   useEffect(() => {
-    if (token) {      
+    if (token) {
       axios
         .get('https://api.spotify.com/v1/me', {
           headers: {
@@ -42,17 +44,29 @@ const App = () => {
     }
   }, [token]);
 
+  useEffect(() => {
+    if (backgroundRef.current) {      
+      gsap.to(backgroundRef.current, {
+        duration: 2,
+        backgroundImage: `linear-gradient(to top right, #121212, ${backgroundColor})`,
+        ease: "power1.inOut",
+      });
+    }
+  }, [backgroundColor]);
+
   return (
-    <div 
-      className="min-h-screen text-white flex flex-col" 
-      style={{ 
-        background: `linear-gradient(to top right, #121212, ${backgroundColor || '#1f1f1f'})`,
-        backgroundSize: 'cover',
-        backgroundPosition: 'center',
-      }}
-    >
-      {!token && <LoginSpotify onLogin={handleLogin} />}
-      <div className='flex-1'>
+    <div className="min-h-screen text-white flex flex-col relative">
+      <div
+        ref={backgroundRef} 
+        className="absolute inset-0"
+        style={{ 
+          background: `#121212`,
+          backgroundSize: 'cover',
+          backgroundPosition: 'center',
+        }}
+      ></div>
+      <div className="relative z-10 flex-1">
+        {!token && <LoginSpotify onLogin={handleLogin} />}
         {token && userData && <Player userData={userData} token={token} />}
       </div>
     </div>

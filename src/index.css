@@ -6,23 +6,17 @@
 
 body {
   @apply font-poppins;
+  overflow: hidden;
 }
 
 .fade-out-hr {
-  height: 2px; 
   background: radial-gradient(circle, white 0%, transparent 70%);
   background-color: white;
-  border-radius: 50%;
-  border: none;
-  width: 100%;
-  max-width: 90%; 
-  margin: 5px auto; 
 }
 
 .dimension-btn-container {
   @apply flex items-center justify-center p-1 rounded-full bg-gray-300 backdrop-blur ml-3 gap-1
 }
-
 
 .dimension-btn {
   @apply w-10 h-10 text-sm flex justify-center items-center bg-white text-black rounded-full transition-all
