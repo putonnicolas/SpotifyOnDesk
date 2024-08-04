@@ -17,12 +17,11 @@ const Navbar = () => {
               </div>
             ))}
           </div>
-          <p className='font-light'>Album</p>
           <div className="flex-grow"></div>
           <button className="dimension-btn-container">
             {
               dimensionList.map(({ label, value }) => (
-                <span className="dimenstion-btn" style={{ backgroundColor: currentDimension === value ? 'white' : 'transparent', color: currentDimension === value ? 'black' : 'white'}} onClick={() => setcurrentDimension(value)}>
+                <span key={label} className="dimenstion-btn" style={{ backgroundColor: currentDimension === value ? 'white' : 'transparent', color: currentDimension === value ? 'black' : 'white'}} onClick={() => setcurrentDimension(value)}>
                   {label}
                 </span>   
               ))}

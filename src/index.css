@@ -1,8 +1,8 @@
+@import 'tailwindcss/tailwind.css';
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
 
-@import 'tailwindcss/tailwind.css';
 
 body {
   @apply font-poppins;
