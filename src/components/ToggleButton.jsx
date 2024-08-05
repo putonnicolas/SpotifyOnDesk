@@ -11,7 +11,7 @@ const ToggleButton = ({onToggle, isToggled}) => {
   return (
     <label 
       htmlFor='checkbox' 
-      className='border-2 w-20 h-10 cursor-pointer relative rounded-full'
+      className='border-2 w-20 h-10 cursor-pointer relative rounded-full select-none'
     >
       <input  
         type='checkbox'
