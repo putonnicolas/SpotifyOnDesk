@@ -1,7 +1,7 @@
-import React, { useState, useEffect } from 'react';
+import { useState, useEffect } from "react";
 
-const ProgressBar = ({ trackDuration, trackProgress }) => {
 
+const ProgressBar = ({ trackDuration, trackProgress}) => {
   const [progress, setProgress] = useState(trackProgress);
 
   useEffect(() => {
@@ -12,13 +12,13 @@ const ProgressBar = ({ trackDuration, trackProgress }) => {
     const totalSeconds = Math.floor(milliseconds / 1000);
     const minutes = Math.floor(totalSeconds / 60);
     const seconds = totalSeconds % 60;
-  
-    return `${minutes}:${seconds < 10 ? '0' : ''}${seconds}`;
+
+    return `${minutes}:${seconds < 10 ? "0" : ""}${seconds}`;
   };
 
   useEffect(() => {
     const interval = setInterval(() => {
-      setProgress(prevProgress => {
+      setProgress((prevProgress) => {
         const newProgress = Math.min(prevProgress + 1000, trackDuration);
         return newProgress;
       });
@@ -27,19 +27,21 @@ const ProgressBar = ({ trackDuration, trackProgress }) => {
   }, [trackDuration]);
 
   return (
-    <div className="mt-10 mb-5 pr-5 pl-5 w-full flex flex-col items-center select-none">
-      <div className="flex justify-between w-full text-sm mb-1">
-        <span>{formatTime(progress)}</span>
-        <span>{formatTime(trackDuration)}</span>
-      </div>
-      <div
-        className="relative w-full h-1 bg-gray-600 rounded"      >
-        <div
-          className="absolute top-0 left-0 h-1 bg-white rounded"
-          style={{ width: `${(progress / trackDuration) * 100}%`, transition: 'width 2s linear'}}
-        />
-      </div>
-    </div>
+        <div className="mt-10 mb-5 pr-5 pl-5 w-full flex flex-col items-center select-none">
+          <div className="flex justify-between w-full text-sm mb-1">
+            <span>{formatTime(progress)}</span>
+            <span>{formatTime(trackDuration)}</span>
+          </div>
+          <div className="relative w-full h-1 bg-gray-600 rounded">
+            <div
+              className="absolute top-0 left-0 h-1 bg-white rounded"
+              style={{
+                width: `${(progress / trackDuration) * 100}%`,
+                transition: "width 2s linear",
+              }}
+            />
+          </div>
+        </div>
   );
 };
 

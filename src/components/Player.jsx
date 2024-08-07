@@ -6,12 +6,14 @@ import axios from 'axios';
 import { useBackground } from '../context/BackgroundContext'; 
 import ColorThief from 'colorthief';
 
+
 const Player = ({ userData, token }) => {
   const [listeningData, setListeningData] = useState(null);
   const [artistImage, setArtistImage] = useState(null);
   const [oldArtist, setOldArtist] = useState('');
-  const [isToggleDimension, setIsToggleDimension] = useState(false);
+  const [isToggleDimension, setIsToggleDimension] = useState(true);
   const { setBackgroundColor } = useBackground(); 
+  const [backgroundColor3D, setBackgroundColor3D] = useState(null)  
 
   useEffect(() => {
     if (!token) return;
@@ -77,9 +79,11 @@ const Player = ({ userData, token }) => {
 
     img.onload = () => {
       const colorThief = new ColorThief();
-      const dominantColor = colorThief.getColor(img);
+      const dominantColor = colorThief.getColor(img);      
       const rgbColor = `rgb(${dominantColor[0]}, ${dominantColor[1]}, ${dominantColor[2]})`;
+      
       setBackgroundColor(rgbColor);
+      setBackgroundColor3D(rgbColor);
     };
 
     img.onerror = () => {
@@ -89,14 +93,14 @@ const Player = ({ userData, token }) => {
 
   const onToggle = () => {
     setIsToggleDimension(t => !t)        
-  }
+  }  
 
   return (
     <>
       <Navbar onToggle={onToggle} isToggled={isToggleDimension}/>
       {!userData && token && <div>Loading data...</div>}
       {listeningData && !isToggleDimension ? <Hero listeningData={listeningData} artistImage={artistImage} /> : null}
-      {listeningData && isToggleDimension ? <Hero3D listeningData={listeningData} artistImage={artistImage}/> : null}
+      {listeningData && isToggleDimension ? <Hero3D listeningData={listeningData} artistImage={artistImage} backgroundColor={backgroundColor3D}/> : null}
     </>
   );
 };
