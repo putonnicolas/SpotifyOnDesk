@@ -12,8 +12,9 @@ const Player = ({ userData, token }) => {
   const [artistImage, setArtistImage] = useState(null);
   const [oldArtist, setOldArtist] = useState('');
   const [isToggleDimension, setIsToggleDimension] = useState(true);
-  const { setBackgroundColor } = useBackground(); 
   const [backgroundColor3D, setBackgroundColor3D] = useState(null)  
+  const [trackEnergy, setTrackEnergy] = useState(0)  
+  const { setBackgroundColor } = useBackground(); 
 
   useEffect(() => {
     if (!token) return;
@@ -40,6 +41,10 @@ const Player = ({ userData, token }) => {
               fetchArtistImage(newListeningData.item.artists[0]);
               setOldArtist(artistName);
             }
+
+            if(newListeningData.item.id){
+              // fetchAudioFeatures(newListeningData.item.id)
+            }
           }
         })
         .catch((error) => {
@@ -56,7 +61,7 @@ const Player = ({ userData, token }) => {
         })
         .then((response) => {
           if (response.data) {
-            setArtistImage(response.data.images[0]);
+            setArtistImage(response.data.images[0]);            
           }
         })
         .catch((error) => {
@@ -64,8 +69,26 @@ const Player = ({ userData, token }) => {
         });
     };
 
-    fetchCurrentTrack();
+    const fetchAudioFeatures = (id) => {      
+      axios
+      .get(`https://api.spotify.com/v1/audio-features/${id}`, 
+      {
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
+      })
+      .then((response) => {        
+        if(response.data){
+          const energy = calculateEnergyScore(response.data)          
+          setTrackEnergy(energy)   
+        }
+      })
+    }
+
+    fetchCurrentTrack()
+    
     const intervalId = setInterval(fetchCurrentTrack, 5000);
+
 
     return () => {
       clearInterval(intervalId);
@@ -100,9 +123,29 @@ const Player = ({ userData, token }) => {
       <Navbar onToggle={onToggle} isToggled={isToggleDimension}/>
       {!userData && token && <div>Loading data...</div>}
       {listeningData && !isToggleDimension ? <Hero listeningData={listeningData} artistImage={artistImage} /> : null}
-      {listeningData && isToggleDimension ? <Hero3D listeningData={listeningData} artistImage={artistImage} backgroundColor={backgroundColor3D}/> : null}
+      {listeningData && isToggleDimension ? <Hero3D listeningData={listeningData} artistImage={artistImage} backgroundColor={backgroundColor3D} energy={trackEnergy}/> : null}
     </>
   );
 };
 
 export default Player;
+
+
+function calculateEnergyScore(audioFeatures) {  
+  const {
+    energy,
+    danceability,
+    valence,
+} = audioFeatures;
+
+  // Weights for ponderation
+  const w1 = 0.4; 
+  const w2 = 0.5; 
+  const w3 = 0.1; 
+
+  const energyScore =
+    (w1 * energy) +
+    (w2 * danceability) +
+    (w3 * valence)
+  return energyScore;
+}

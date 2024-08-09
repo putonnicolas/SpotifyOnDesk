@@ -1,24 +1,52 @@
-import { useMemo, useRef } from "react";
 import * as THREE from "three";
 import { Text, Float} from "@react-three/drei";
 import ProgressBar3D from "./ProgressBar3D";
+import { useLoader } from "@react-three/fiber";
+import { useEffect, useMemo, useState } from "react";
+import gsap from "gsap";
 
 
-const musicElements = ({ listeningData, artistImage }) => {
-  
-  const Image = ({ url, position, circle, scale }) => {
-    const texture = useMemo(() => new THREE.TextureLoader().load(url), [url]);
+const musicElements = ({ listeningData, artistImage }) => {  
 
+  const Image = ({ texture, position, circle, scale }) => {
     return (
       <mesh position={position} scale={scale}>
-        {circle ? <circleGeometry /> : <planeGeometry args={[5, 5]} />}
+        {circle ? <circleGeometry args={[2, 32]} /> : <planeGeometry args={[5, 5]} />}
         <meshBasicMaterial map={texture} />
       </mesh>
     );
-  }
+  };
 
+  /**
+   * Text
+   */
   const artistsName = listeningData.item.artists.map((artist) => artist.name);
   const artists = artistsName.join(", ");
+  
+  const songName = listeningData.item.name
+  const albumName = '  ·  ' + listeningData.item.album.name
+  
+  const fontSize = 0.75
+  const charWidth = 0.5 * fontSize
+  const artistsTextWidth = artists.length > 15 ? 18 * charWidth : artists.length * charWidth
+  
+  /**
+   *  Textures
+   */
+  
+  const albumURL = listeningData.item.album.images[0]?.url || '';
+  const artistURL = artistImage ? artistImage.url : '';
+
+  const albumTexture = useLoader(THREE.TextureLoader, albumURL);
+  const artistTexture = artistURL ? useLoader(THREE.TextureLoader, artistURL) : ''
+
+  useEffect(() => {
+    return () => {
+      albumTexture.dispose();
+      artistURL ? artistTexture.dispose() : null
+    };
+  }, [albumTexture, artistTexture]);
+
 
   return (
     <group position={[0, 15, -15]} scale={2}>
@@ -30,60 +58,62 @@ const musicElements = ({ listeningData, artistImage }) => {
         <Image
           position={[-5.5, 0, 0]}
           scale={1.5}
-          url={listeningData.item.album.images[0]?.url}
+          texture={albumTexture}
         />
       </Float>
 
-      {/* Song name  */}
-      <Float
-        floatIntensity={0.3}
-      >
-        <Text
-          position={[-1, 0, 0]}
-          anchorX="left"
-          font="./fonts/Poppins-SemiBold.ttf"
-          color="white"
-          fontSize={1.25}
-          maxWidth={20}
+      <group position={[1,0,0]} >
+        {/* Song name  */}
+        <Float
+          floatIntensity={0.3}
         >
-          {listeningData.item.name}
-        </Text>
-      </Float>
+          <Text
+            position={[-1, 0.5, 0]}
+            anchorX="left"
+            font="./fonts/Poppins-SemiBold.ttf"
+            color="white"
+            fontSize={1.25}
+            maxWidth={20}
+          >
+            {songName.length > 25 ? songName.slice(0,25) + '...' : songName}
+          </Text>
+        </Float>
 
-      {/* Artist  */}
-      <Float
-        floatIntensity={0.3}
-      >
-        <Image
-          position={[-0.5, -2, 0]}
-          scale={0.5}
-          url={artistImage?.url}
-          circle={true}
-        />
-        <Text
-          position={[0.5, -2, 0]}
-          font="./fonts/Poppins-Light.ttf"
-          fontSize={0.75}
-          anchorX="left"
-          color="#9ca3af"
-          maxWidth={5}
+        {/* Artist  */}
+        <Float
+          floatIntensity={0.3}
         >
-          {artists}
-        </Text>
+          <Image
+            texture={artistTexture}
+            position={[-0.5, -2, 0]}
+            scale={0.5}
+            circle={true}
+          />
+          <Text
+            position={[1.5, -2, 0]}
+            font="./fonts/Poppins-Light.ttf"
+            fontSize={0.75}
+            anchorX="left"
+            color="#9ca3af"
+            maxWidth={8}
+          >
+            {artists.length > 18 ? artists.slice(0,15) + '...': artists }
+          </Text>
 
-        {/* Album name */}
-        <Text
-          position={[8, -2, 0]}
-          font="./fonts/Poppins-ExtraLight.ttf"
-          fontSize={0.75}
-          anchorX="left"
-          color="#9ca3af"
-          maxWidth={5}
+          {/* Album name */}
+          <Text
+            position={[1.5 + artistsTextWidth, -2, 0]}
+            font="./fonts/Poppins-ExtraLight.ttf"
+            fontSize={0.75}
+            anchorX="left"
+            color="#9ca3af"
+            maxWidth={10}
 
-        >
-          {`·   ${listeningData.item.album.name}`}
-        </Text>
-      </Float>
+          >
+            {`${albumName.length > 23 ? albumName.slice(0, 20) + '...' : albumName }`}
+          </Text>
+        </Float>
+      </group>
 
       <Float
         floatIntensity={0.1}

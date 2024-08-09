@@ -1,6 +1,5 @@
 uniform float uTime;
-uniform float uFrequency;
-uniform float uAmplitude;
+uniform float uEnergy;
 
 varying vec2 vUv;
 
@@ -10,8 +9,7 @@ vec2 randomGradient(vec2 p) {
   vec2 gradient = vec2(x, y);
   gradient = sin(gradient);
   gradient = gradient * 43758.5453;
-  // gradient = sin(gradient);
-  gradient = sin(gradient + uTime / 8.0);
+  gradient = sin(gradient + uTime);
   return gradient;
 }
 
@@ -55,11 +53,8 @@ float perlinNoise(vec2 uv) {
 float fbmPerlinNoise(vec2 uv) {
   float fbmNoise = 0.0;
   float amplitude = 1.0;
-  // const float octaves = 1.0;
   const float octaves = 2.0;
-//   const float octaves = 3.0;
-//   const float octaves = 4.0;
-//   const float octaves = 5.0;
+
 
   for (float i = 0.0; i < octaves; i++) {
     fbmNoise = fbmNoise + perlinNoise(uv) * amplitude;
@@ -67,14 +62,10 @@ float fbmPerlinNoise(vec2 uv) {
     uv = uv * 2.0;
   }
 
-  // fbmNoise = fbmNoise / 2.0;
-
   return fbmNoise;
 }
 
 float domainWarpFbmPerlinNoise(vec2 uv) {
-  // return fbmPerlinNoise(uv);
-
   float fbm1 = fbmPerlinNoise(uv + vec2(0.0, 0.0));
   float fbm2 = fbmPerlinNoise(uv + vec2(5.2, 1.3));
   return fbmPerlinNoise(vec2(fbm1, fbm2));
@@ -90,11 +81,9 @@ void main()
     vec4 modelPosition = modelMatrix * vec4(position, 1.0);
     
     vec2 newUv = uv * 4.0;
-    float pNoise = perlinNoise(newUv);
-    float fbmNoise = fbmPerlinNoise(newUv);
     float dwNoise = domainWarpFbmPerlinNoise(newUv);
 
-    modelPosition.x += dwNoise * 6.0;
+    modelPosition.x += dwNoise * uEnergy * 10.0;
 
     vec4 viewPosition = viewMatrix * modelPosition;
     vec4 projectedPosition = projectionMatrix * viewPosition;

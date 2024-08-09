@@ -1,6 +1,7 @@
 uniform vec3 uColor;
 uniform float uTime;
 varying vec2 vUv;
+uniform float uEnergy;
 
 vec2 randomGradient(vec2 p) {
   float x = dot(p, vec2(123.4, 234.5));
@@ -99,14 +100,6 @@ void main() {
   vec3 color = vec3(0.0);
 
   uv = uv * 4.0;
-  float pNoise = perlinNoise(uv);
-  color = vec3(pNoise);
-
-  // part 1 - fractional brownian motion
-  float fbmNoise = fbmPerlinNoise(uv);
-  // color = vec3(fbmNoise);
-
-  // part 2 - domain warping
   float dwNoise = domainWarpFbmPerlinNoise(uv);
   color = vec3(dwNoise);
 
@@ -133,6 +126,8 @@ void main() {
 
   lighting = diffuse * 0.5 + specular * 0.5;
   color = lighting;
+
+  // color = vec3(uEnergy);
 
   gl_FragColor = vec4(color, 1.0);
 }

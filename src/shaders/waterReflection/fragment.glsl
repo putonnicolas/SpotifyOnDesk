@@ -21,7 +21,7 @@ void main() {
 
     vec4 base = texture2DProj(tDiffuse, vUv);
     gl_FragColor = vec4(blendOverlay(base.rgb, color), 1.0);
-
+    
     #include <tonemapping_fragment>
     #include <colorspace_fragment>
 
