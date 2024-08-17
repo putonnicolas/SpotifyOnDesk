@@ -1,7 +1,6 @@
 uniform vec3 uColor;
 uniform float uTime;
 varying vec2 vUv;
-uniform float uEnergy;
 
 vec2 randomGradient(vec2 p) {
   float x = dot(p, vec2(123.4, 234.5));
@@ -117,17 +116,15 @@ void main() {
   color = lighting;
 
   // part 3.3 - specular lighting
-  vec3 cameraSource = vec3(0.0, 0.0, 1.0);
+  vec3 cameraSource = cameraPosition;
   vec3 viewSource = normalize(cameraSource);
   vec3 reflectSource = normalize(reflect(-lightSource, normal));
-  float specularStrength = max(0.0, dot(viewSource, reflectSource));
+  float specularStrength = max(0.2, dot(viewSource, reflectSource));
   specularStrength = pow(specularStrength, 32.0);
   vec3 specular = specularStrength * lightColor;
 
   lighting = diffuse * 0.5 + specular * 0.5;
   color = lighting;
-
-  // color = vec3(uEnergy);
 
   gl_FragColor = vec4(color, 1.0);
 }

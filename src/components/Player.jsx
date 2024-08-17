@@ -11,7 +11,7 @@ const Player = ({ userData, token }) => {
   const [listeningData, setListeningData] = useState(null);
   const [artistImage, setArtistImage] = useState(null);
   const [oldArtist, setOldArtist] = useState('');
-  const [isToggleDimension, setIsToggleDimension] = useState(true);
+  const [isToggleDimension, setIsToggleDimension] = useState(false);
   const [backgroundColor3D, setBackgroundColor3D] = useState(null)  
   const [trackEnergy, setTrackEnergy] = useState(0)  
   const { setBackgroundColor } = useBackground(); 
@@ -43,7 +43,7 @@ const Player = ({ userData, token }) => {
             }
 
             if(newListeningData.item.id){
-              // fetchAudioFeatures(newListeningData.item.id)
+              fetchAudioFeatures(newListeningData.item.id)
             }
           }
         })
@@ -87,7 +87,7 @@ const Player = ({ userData, token }) => {
 
     fetchCurrentTrack()
     
-    const intervalId = setInterval(fetchCurrentTrack, 5000);
+    const intervalId = setInterval(fetchCurrentTrack, 10000);
 
 
     return () => {
@@ -119,12 +119,12 @@ const Player = ({ userData, token }) => {
   }  
 
   return (
-    <>
+    <div className='flex-col'>
       <Navbar onToggle={onToggle} isToggled={isToggleDimension}/>
       {!userData && token && <div>Loading data...</div>}
       {listeningData && !isToggleDimension ? <Hero listeningData={listeningData} artistImage={artistImage} /> : null}
       {listeningData && isToggleDimension ? <Hero3D listeningData={listeningData} artistImage={artistImage} backgroundColor={backgroundColor3D} energy={trackEnergy}/> : null}
-    </>
+    </div>
   );
 };
 

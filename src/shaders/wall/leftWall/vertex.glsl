@@ -1,7 +1,10 @@
 uniform float uTime;
 uniform float uEnergy;
+uniform vec3 uLightPosition;
+
 
 varying vec2 vUv;
+varying vec3 vFromLight;
 
 vec2 randomGradient(vec2 p) {
   float x = dot(p, vec2(123.4, 234.5));
@@ -78,18 +81,18 @@ float domainWarpFbmPerlinNoise(vec2 uv) {
 void main()
 {
 
-    vec4 modelPosition = modelMatrix * vec4(position, 1.0);
+    vec4 worldPosition = modelMatrix * vec4(position, 1.0);
     
     vec2 newUv = uv * 4.0;
     float dwNoise = domainWarpFbmPerlinNoise(newUv);
 
-    modelPosition.x += dwNoise * uEnergy * 10.0;
+    worldPosition.x += dwNoise * uEnergy * 10.0;
 
-    vec4 viewPosition = viewMatrix * modelPosition;
+    vec4 viewPosition = viewMatrix * worldPosition;
     vec4 projectedPosition = projectionMatrix * viewPosition;
 
     gl_Position = projectedPosition;
 
+    vFromLight = worldPosition.xyz - uLightPosition;
     vUv = uv;
-    // vElevation = elevation;
 }

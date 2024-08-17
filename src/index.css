@@ -21,3 +21,7 @@ body {
 .dimension-btn {
   @apply w-10 h-10 text-sm flex justify-center items-center bg-white text-black rounded-full transition-all
 }
+
+.hero2D {
+  flex-grow: 2;
+}

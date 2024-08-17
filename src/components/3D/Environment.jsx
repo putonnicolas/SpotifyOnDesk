@@ -1,29 +1,24 @@
-import { useEffect, useRef, useState } from "react";
+import { useEffect, useRef } from "react";
 import { extend, useFrame } from "@react-three/fiber";
 import * as THREE from "three";
 import { shaderMaterial } from "@react-three/drei";
-import { useControls } from "leva";
+import { useControls, folder } from "leva";
 import gsap from "gsap";
-import _ from "lodash"
+import _ from "lodash";
 
-
-import waterReflectionVertex from "../../shaders/waterReflection/vertex.glsl";
-import waterReflectionFragment from "../../shaders/waterReflection/fragment.glsl";
 import wallVertex from "../../shaders/wall/vertex.glsl";
 import wallFragment from "../../shaders/wall/fragment.glsl";
 import leftWallVertex from "../../shaders/wall/leftWall/vertex.glsl";
 import leftWallFragment from "../../shaders/wall/leftWall/fragment.glsl";
-
-const FloorShaderMaterial = shaderMaterial(
-  { uTime: 0, color: new THREE.Color("grey") },
-  waterReflectionVertex,
-  waterReflectionFragment
-);
+import Water from "./Water";
 
 const WallShaderMaterial = shaderMaterial(
   {
     uTime: 0,
     uColor: new THREE.Color("white"),
+    uLightPosition: new THREE.Vector3(0,45,0),
+		uDirectionalLightPosition: new THREE.Vector3(0, 15, -10),
+		uLightColor: new THREE.Vector3(1,1,1),
   },
   wallVertex,
   wallFragment
@@ -35,38 +30,42 @@ const LeftWallShaderMaterial = shaderMaterial(
     uColor: new THREE.Color("white"),
     uFrequency: 0.5,
     uEnergy: 0.5,
+    uLightPosition: new THREE.Vector3(0,45,0),
   },
   leftWallVertex,
   leftWallFragment
 );
 
-extend({ FloorShaderMaterial, WallShaderMaterial, LeftWallShaderMaterial });
+extend({ WallShaderMaterial, LeftWallShaderMaterial });
 
-
-const Environment = ({ backgroundColor, energy }) => {  
-  
-  const animatedBackgroundRef = useRef(new THREE.Color('#121212'));
-  const animatedEnergyRef = useRef({ value: 0 });
+const Environment = ({ backgroundColor, energy }) => {
+  const animatedBackgroundRef = useRef(new THREE.Color("#121212"));
+  const animatedEnergyRef = useRef({ value: 0.1 });
   const gsapTimeline = useRef(gsap.timeline());
 
-  const newColor = new THREE.Color(backgroundColor)
+  const newColor = new THREE.Color(backgroundColor);
 
   const { frequency } = useControls({
-    frequency: {
-      value: 0.5,
-      min: 0,
-      max: 1000,
-    }
+    environment: folder({
+      frequency: {
+        value: 0.5,
+        min: 0,
+        max: 1000,
+      },
+    }),
   });
 
-  const floorRef = useRef();
+  const topWallRef = useRef()
   const leftWallRef = useRef();
   const rightWallRef = useRef();
   const backWallRef = useRef();
 
   const updateColor = () => {
-
     const color = animatedBackgroundRef.current.convertLinearToSRGB();
+
+    if (topWallRef.current) {
+      topWallRef.current.uColor.set(color);
+    }
     
     if (leftWallRef.current) {
       leftWallRef.current.uColor.set(color);
@@ -81,15 +80,13 @@ const Environment = ({ backgroundColor, energy }) => {
     }
   };
 
-  const updateEnergy = () => {    
+  const updateEnergy = () => {
     if (leftWallRef.current) {
       leftWallRef.current.uEnergy = animatedEnergyRef.current.value;
     }
-  }
+  };
 
-  const throttledUpdateEnergy = useRef(    
-    _.throttle(updateEnergy, 100) 
-  ).current;
+  const throttledUpdateEnergy = useRef(_.throttle(updateEnergy, 100)).current;
 
   useEffect(() => {
     gsap.to(animatedBackgroundRef.current, {
@@ -97,10 +94,9 @@ const Environment = ({ backgroundColor, energy }) => {
       g: newColor.g,
       b: newColor.b,
       duration: 6,
-      onUpdate: updateColor,  
+      onUpdate: updateColor,
     });
   }, [backgroundColor]);
-
 
   useEffect(() => {
     gsapTimeline.current.clear();
@@ -115,10 +111,6 @@ const Environment = ({ backgroundColor, energy }) => {
 
   useFrame(({ clock }) => {
     const elapsedTime = clock.getElapsedTime();
-
-    if (floorRef.current) {
-      floorRef.current.uTime = elapsedTime;
-    }
 
     if (leftWallRef.current) {
       leftWallRef.current.uTime = elapsedTime;
@@ -136,37 +128,43 @@ const Environment = ({ backgroundColor, energy }) => {
 
   return (
     <>
-      <ambientLight intensity={10} />
+      {/* <ambientLight intensity={10} /> */}
 
-      <pointLight position={[0, 10, 0]} intensity={100} />
+      <Water />
 
-      {/* Floor*/}
-      <mesh rotation={[-Math.PI / 2, 0, 0]} scale={100} position={[0, -5, 0]}>
-        <planeGeometry />
-        {/* <floorShaderMaterial ref={floorRef}/> */}
-        <meshBasicMaterial />
-      </mesh>
-      {/* walls */}
+      {/* Walls */}
+      <group position={[0, 44, 0]}>
+        <mesh rotation={[0, Math.PI / 2, 0]} scale={100} position={[-45, 0, 0]}>
+          <planeGeometry args={[1, 1, 8, 8]} />
+          <leftWallShaderMaterial ref={leftWallRef} />
+        </mesh>
 
-      <mesh rotation={[0, Math.PI / 2, 0]} scale={100} position={[-45, 44, 0]}>
-        <planeGeometry args={[1, 1, 64, 64]} />
-        <leftWallShaderMaterial ref={leftWallRef} />
-        {/* <meshStandardMaterial wireframe/> */}
-      </mesh>
+        <mesh
+          rotation={[(3 * Math.PI) / 2, -Math.PI / 2, 0]}
+          scale={100}
+          position={[45, 0, 0]}
+        >
+          <planeGeometry />
+          <wallShaderMaterial ref={rightWallRef} />
+        </mesh>
 
-      <mesh
-        rotation={[(3 * Math.PI) / 2, -Math.PI / 2, 0]}
-        scale={100}
-        position={[45, 44, 0]}
-      >
-        <planeGeometry />
-        <wallShaderMaterial ref={rightWallRef} />
-      </mesh>
+        <mesh 
+          scale={100} 
+          position={[0, 0, -45]}
+        >
+          <planeGeometry />
+          <wallShaderMaterial ref={backWallRef} />
+        </mesh>
 
-      <mesh scale={100} position={[0, 44, -45]}>
-        <planeGeometry />
-        <wallShaderMaterial ref={backWallRef} />
-      </mesh>
+        <mesh 
+          rotation={[ Math.PI /2, 0 ,3* Math.PI / 2 ]}
+          scale={100}
+          position={[0, 44, 0]}
+        >
+          <planeGeometry />
+          <wallShaderMaterial ref={topWallRef} />
+        </mesh>
+      </group>
     </>
   );
 };

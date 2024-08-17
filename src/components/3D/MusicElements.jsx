@@ -20,6 +20,7 @@ const musicElements = ({ listeningData, artistImage }) => {
   /**
    * Text
    */
+  
   const artistsName = listeningData.item.artists.map((artist) => artist.name);
   const artists = artistsName.join(", ");
   
@@ -49,7 +50,7 @@ const musicElements = ({ listeningData, artistImage }) => {
 
 
   return (
-    <group position={[0, 15, -15]} scale={2}>
+    <group position={[0, 15, -10]} scale={2}>
       {/* Image album */}
       <Float
         floatIntensity={2}
