@@ -1,7 +1,8 @@
 import { useEffect } from 'react'
 
 const clientId = 'aecb385327ac4193ba946575ba6fd2e2'
-const redirectUri = 'http://localhost:4000/'
+// const redirectUri = 'http://localhost:4000/'
+const redirectUri = 'https://spotify-on-desk.vercel.app/'
 const scopes = [
   'user-read-private',
   'user-read-email',
