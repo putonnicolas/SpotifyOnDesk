@@ -2,10 +2,10 @@ import { navLists } from '../constants';
 import ToggleButton from './ToggleButton.jsx'
 
 
-const Navbar = ({ onToggle }) => {
+const Navbar = ({ onToggle, isToggled }) => {
   return (
     <>
-      <header className="border py-5 sm:px-10 px-5 z-20 h-auto">
+      <header className={`w-full py-5 sm:px-10 px-5  z-20 ${isToggled ? 'absolute' : 'flex-navbar'}`}>
         <div className="flex justify-between items-center">
           <nav className="flex w-full items-center">
             <img src="./logo/spotify.png" alt="Spotify Logo" width={50} className="mr-4 select-none" />

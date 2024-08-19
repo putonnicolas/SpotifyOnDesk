@@ -1,6 +1,6 @@
 import React, { useState } from 'react'
 
-const ToggleButton = ({onToggle, isToggled}) => {
+const ToggleButton = ({onToggle }) => {
   const [toggle, setToggle] = useState(false)
   const handleToggle = () => {
     setToggle(t => !t)

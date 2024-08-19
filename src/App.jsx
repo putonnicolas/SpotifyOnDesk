@@ -55,21 +55,25 @@ const App = () => {
   }, [backgroundColor]);
 
   return (
-    <div className="min-h-screen text-white flex flex-col relative">
-      <div
-        ref={backgroundRef} 
-        className="absolute inset-0"
-        style={{ 
-          background: `#121212`,
-          backgroundSize: 'cover',
-          backgroundPosition: 'center',
-        }}
-      ></div>
-      <div className="relative z-10 flex-1">
-        {!token && <LoginSpotify onLogin={handleLogin} />}
+    <>
+      <div className="min-h-screen text-white relative">
+        <div
+          ref={backgroundRef} 
+          className="absolute inset-0"
+          style={{ 
+            background: `#121212`,
+            backgroundSize: 'cover',
+            backgroundPosition: 'center',
+          }}
+          />
+          
         {token && userData && <Player userData={userData} token={token} />}
+
+        <div className="relative z-10 flex-1">
+          {!token && <LoginSpotify onLogin={handleLogin} />}
+        </div>
       </div>
-    </div>
+    </>
   );
 };
 

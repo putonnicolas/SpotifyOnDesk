@@ -23,5 +23,28 @@ body {
 }
 
 .hero2D {
-  flex-grow: 2;
+  /* background-color: aqua; */
+  flex-grow: 1;
+}
+
+.flex-navbar {
+  /* background-color: blueviolet; */
+  flex-grow: 1;
+}
+.flexDiv {
+  bottom: 0px;
+  width: full;
+  /* border: 1px; */
+  /* background-color: black; */
+  flex-grow: 1;
+}
+
+.player {
+  position: fixed;
+  height: 100%;
+  width: 100%;
+  flex-direction: column;
+  justify-content: space-between;
+  /* border-width: 2px; */
+  /* border-color: blue; */
 }

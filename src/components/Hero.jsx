@@ -6,8 +6,8 @@ const Hero = ({ listeningData, artistImage }) => {
   const artists = artistsName.join(", ");
 
   return (
-    <> 
-      <section className="flex flex-col sm:flex-row sm:items-center sm:justify-between border p-5">
+    <div className="hero2D"> 
+      <section className="flex flex-col sm:flex-row sm:items-center sm:justify-between p-5">
         <img
           className="rounded-xl select-none max-w-full sm:w-1/3 sm:max-w-xs"
           src={listeningData.item.album.images[0]?.url}
@@ -38,7 +38,7 @@ const Hero = ({ listeningData, artistImage }) => {
           />
         </div>
       </section>
-    </>
+    </div>
   );
 };
 
