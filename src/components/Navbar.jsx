@@ -1,4 +1,4 @@
-import { navLists } from '../constants';
+import { navLists } from '../constants'
 import ToggleButton from './ToggleButton.jsx'
 
 
@@ -25,8 +25,8 @@ const Navbar = ({ onToggle, isToggled, showButton=true }) => {
         </div>
       </header>
     </>
-  );
-};
+  )
+}
 
 
-export default Navbar;
+export default Navbar

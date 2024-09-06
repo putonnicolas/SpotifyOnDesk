@@ -1,30 +1,30 @@
-import { useState, useEffect } from "react";
+import { useState, useEffect } from "react"
 
 
 const ProgressBar = ({ trackDuration, trackProgress}) => {
-  const [progress, setProgress] = useState(trackProgress);
+  const [progress, setProgress] = useState(trackProgress)
 
   useEffect(() => {
-    setProgress(trackProgress);
-  }, [trackProgress]);
+    setProgress(trackProgress)
+  }, [trackProgress])
 
   const formatTime = (milliseconds) => {
-    const totalSeconds = Math.floor(milliseconds / 1000);
-    const minutes = Math.floor(totalSeconds / 60);
-    const seconds = totalSeconds % 60;
+    const totalSeconds = Math.floor(milliseconds / 1000)
+    const minutes = Math.floor(totalSeconds / 60)
+    const seconds = totalSeconds % 60
 
-    return `${minutes}:${seconds < 10 ? "0" : ""}${seconds}`;
-  };
+    return `${minutes}:${seconds < 10 ? "0" : ""}${seconds}`
+  }
 
   useEffect(() => {
     const interval = setInterval(() => {
       setProgress((prevProgress) => {
-        const newProgress = Math.min(prevProgress + 1000, trackDuration);
-        return newProgress;
-      });
-    }, 1000);
-    return () => clearInterval(interval);
-  }, [trackDuration]);
+        const newProgress = Math.min(prevProgress + 1000, trackDuration)
+        return newProgress
+      })
+    }, 1000)
+    return () => clearInterval(interval)
+  }, [trackDuration])
 
   return (
         <div className="mt-5 mb-5  w-full flex flex-col items-center select-none">
@@ -42,7 +42,7 @@ const ProgressBar = ({ trackDuration, trackProgress}) => {
             />
           </div>
         </div>
-  );
-};
+  )
+}
 
-export default ProgressBar;
+export default ProgressBar

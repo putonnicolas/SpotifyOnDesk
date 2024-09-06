@@ -64,5 +64,5 @@ void main() {
   color.rgb = pow(color.rgb, vec3(1.0 / 2.2));
 
 
-  gl_FragColor = color ;
+  gl_FragColor = color;
 }

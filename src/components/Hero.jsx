@@ -1,9 +1,9 @@
-import React from "react";
-import ProgressBar from "./ProgressBar";
+import React from "react"
+import ProgressBar from "./ProgressBar"
 
 const Hero = ({ listeningData, artistImage }) => {
-  const artistsName = listeningData.item.artists.map((artist) => artist.name);
-  const artists = artistsName.join(", ");
+  const artistsName = listeningData.item.artists.map((artist) => artist.name)
+  const artists = artistsName.join(", ")
 
   return (
     <div className="hero2D">
@@ -44,7 +44,7 @@ const Hero = ({ listeningData, artistImage }) => {
         />
       </div>
     </div>
-  );
-};
+  )
+}
 
-export default Hero;
+export default Hero

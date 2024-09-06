@@ -1,16 +1,16 @@
-import { useEffect, useRef } from "react";
-import { extend, useFrame } from "@react-three/fiber";
-import * as THREE from "three";
-import { shaderMaterial } from "@react-three/drei";
-import { useControls, folder } from "leva";
-import gsap from "gsap";
-import _ from "lodash";
+import { useEffect, useRef } from "react"
+import { extend, useFrame } from "@react-three/fiber"
+import * as THREE from "three"
+import { shaderMaterial } from "@react-three/drei"
+import { useControls, folder } from "leva"
+import gsap from "gsap"
+import _ from "lodash"
 
-import wallVertex from "../../shaders/wall/vertex.glsl";
-import wallFragment from "../../shaders/wall/fragment.glsl";
-import leftWallVertex from "../../shaders/wall/leftWall/vertex.glsl";
-import leftWallFragment from "../../shaders/wall/leftWall/fragment.glsl";
-import Water from "./Water";
+import wallVertex from "../../shaders/wall/vertex.glsl"
+import wallFragment from "../../shaders/wall/fragment.glsl"
+import leftWallVertex from "../../shaders/wall/leftWall/vertex.glsl"
+import leftWallFragment from "../../shaders/wall/leftWall/fragment.glsl"
+import Water from "./Water"
 
 const WallShaderMaterial = shaderMaterial(
   {
@@ -22,7 +22,7 @@ const WallShaderMaterial = shaderMaterial(
   },
   wallVertex,
   wallFragment
-);
+)
 
 const LeftWallShaderMaterial = shaderMaterial(
   {
@@ -34,16 +34,18 @@ const LeftWallShaderMaterial = shaderMaterial(
   },
   leftWallVertex,
   leftWallFragment
-);
+)
 
-extend({ WallShaderMaterial, LeftWallShaderMaterial });
+extend({ WallShaderMaterial, LeftWallShaderMaterial })
 
 const Environment = ({ backgroundColor, energy }) => {
-  const animatedBackgroundRef = useRef(new THREE.Color("#121212"));
-  const animatedEnergyRef = useRef({ value: 0.1 });
-  const gsapTimeline = useRef(gsap.timeline());
+  console.log(energy)
+  
+  const animatedBackgroundRef = useRef(new THREE.Color("#121212"))
+  const animatedEnergyRef = useRef({ value: 0.1 })
+  const gsapTimeline = useRef(gsap.timeline())
 
-  const newColor = new THREE.Color(backgroundColor);
+  const newColor = new THREE.Color(backgroundColor)
 
   const { frequency } = useControls({
     environment: folder({
@@ -53,40 +55,40 @@ const Environment = ({ backgroundColor, energy }) => {
         max: 1000,
       },
     }),
-  });
+  })
 
   const topWallRef = useRef()
-  const leftWallRef = useRef();
-  const rightWallRef = useRef();
-  const backWallRef = useRef();
+  const leftWallRef = useRef()
+  const rightWallRef = useRef()
+  const backWallRef = useRef()
 
   const updateColor = () => {
-    const color = animatedBackgroundRef.current.convertLinearToSRGB();
+    const color = animatedBackgroundRef.current.convertLinearToSRGB()
 
     if (topWallRef.current) {
-      topWallRef.current.uColor.set(color);
+      topWallRef.current.uColor.set(color)
     }
     
     if (leftWallRef.current) {
-      leftWallRef.current.uColor.set(color);
+      leftWallRef.current.uColor.set(color)
     }
 
     if (rightWallRef.current) {
-      rightWallRef.current.uColor.set(color);
+      rightWallRef.current.uColor.set(color)
     }
 
     if (backWallRef.current) {
-      backWallRef.current.uColor.set(color);
+      backWallRef.current.uColor.set(color)
     }
-  };
+  }
 
   const updateEnergy = () => {
     if (leftWallRef.current) {
-      leftWallRef.current.uEnergy = animatedEnergyRef.current.value;
+      leftWallRef.current.uEnergy = animatedEnergyRef.current.value
     }
-  };
+  }
 
-  const throttledUpdateEnergy = useRef(_.throttle(updateEnergy, 100)).current;
+  const throttledUpdateEnergy = useRef(_.throttle(updateEnergy, 100)).current
 
   useEffect(() => {
     gsap.to(animatedBackgroundRef.current, {
@@ -95,41 +97,39 @@ const Environment = ({ backgroundColor, energy }) => {
       b: newColor.b,
       duration: 6,
       onUpdate: updateColor,
-    });
-  }, [backgroundColor]);
+    })
+  }, [backgroundColor])
 
   useEffect(() => {
-    gsapTimeline.current.clear();
+    gsapTimeline.current.clear()
 
     gsapTimeline.current.to(animatedEnergyRef.current, {
       value: energy,
       duration: 5,
       ease: "power2.out",
       onUpdate: updateEnergy,
-    });
-  }, [energy]);
+    })
+  }, [energy])
 
   useFrame(({ clock }) => {
-    const elapsedTime = clock.getElapsedTime();
+    const elapsedTime = clock.getElapsedTime()
 
     if (leftWallRef.current) {
-      leftWallRef.current.uTime = elapsedTime;
-      leftWallRef.current.uFrequency = frequency;
+      leftWallRef.current.uTime = elapsedTime
+      leftWallRef.current.uFrequency = frequency
     }
 
     if (rightWallRef.current) {
-      rightWallRef.current.uTime = elapsedTime;
+      rightWallRef.current.uTime = elapsedTime
     }
 
     if (backWallRef.current) {
-      backWallRef.current.uTime = elapsedTime;
+      backWallRef.current.uTime = elapsedTime
     }
-  });
+  })
 
   return (
     <>
-      {/* <ambientLight intensity={10} /> */}
-
       <Water />
 
       {/* Walls */}
@@ -166,7 +166,7 @@ const Environment = ({ backgroundColor, energy }) => {
         </mesh>
       </group>
     </>
-  );
-};
+  )
+}
 
-export default Environment;
+export default Environment

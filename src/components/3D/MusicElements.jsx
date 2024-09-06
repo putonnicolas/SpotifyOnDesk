@@ -1,9 +1,8 @@
-import * as THREE from "three";
-import { Text, Float} from "@react-three/drei";
-import ProgressBar3D from "./ProgressBar3D";
-import { useLoader } from "@react-three/fiber";
-import { useEffect, useMemo, useState } from "react";
-import gsap from "gsap";
+import * as THREE from "three"
+import { Text, Float} from "@react-three/drei"
+import ProgressBar3D from "./ProgressBar3D"
+import { useLoader } from "@react-three/fiber"
+import { useEffect } from "react"
 
 
 const musicElements = ({ listeningData, artistImage }) => {  
@@ -14,15 +13,15 @@ const musicElements = ({ listeningData, artistImage }) => {
         {circle ? <circleGeometry args={[2, 32]} /> : <planeGeometry args={[5, 5]} />}
         <meshBasicMaterial map={texture} />
       </mesh>
-    );
-  };
+    )
+  }
 
   /**
    * Text
    */
   
-  const artistsName = listeningData.item.artists.map((artist) => artist.name);
-  const artists = artistsName.join(", ");
+  const artistsName = listeningData.item.artists.map((artist) => artist.name)
+  const artists = artistsName.join(", ")
   
   const songName = listeningData.item.name
   const albumName = '  ·  ' + listeningData.item.album.name
@@ -35,18 +34,18 @@ const musicElements = ({ listeningData, artistImage }) => {
    *  Textures
    */
   
-  const albumURL = listeningData.item.album.images[0]?.url || '';
-  const artistURL = artistImage ? artistImage.url : '';
+  const albumURL = listeningData.item.album.images[0]?.url || ''
+  const artistURL = artistImage ? artistImage.url : ''
 
-  const albumTexture = useLoader(THREE.TextureLoader, albumURL);
+  const albumTexture = useLoader(THREE.TextureLoader, albumURL)
   const artistTexture = artistURL ? useLoader(THREE.TextureLoader, artistURL) : ''
 
   useEffect(() => {
     return () => {
-      albumTexture.dispose();
+      albumTexture.dispose()
       artistURL ? artistTexture.dispose() : null
-    };
-  }, [albumTexture, artistTexture]);
+    }
+  }, [albumTexture, artistTexture])
 
 
   return (
@@ -127,7 +126,7 @@ const musicElements = ({ listeningData, artistImage }) => {
         />
       </Float>
     </group>
-  );
-};
+  )
+}
 
-export default musicElements;
+export default musicElements

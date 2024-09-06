@@ -102,10 +102,8 @@ void main() {
   float dwNoise = domainWarpFbmPerlinNoise(uv);
   color = vec3(dwNoise);
 
-  // part 3.1 - central differences method
   vec3 normal = calcNormal(uv);
 
-  // part 3.2 - diffuse lighting
   vec3 white = vec3(1.0);
   vec3 lightColor = white;
   lightColor = uColor;
@@ -115,7 +113,6 @@ void main() {
   vec3 lighting = diffuse * 0.5;
   color = lighting;
 
-  // part 3.3 - specular lighting
   vec3 cameraSource = cameraPosition;
   vec3 viewSource = normalize(cameraSource);
   vec3 reflectSource = normalize(reflect(-lightSource, normal));

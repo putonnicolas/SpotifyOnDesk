@@ -1,29 +1,29 @@
-import React, { useEffect, useState, useRef } from 'react';
-import LoginSpotify from './components/LoginSpotify';
-import axios from 'axios';
-import Player from './components/Player';
-import { BackgroundProvider, useBackground } from './context/BackgroundContext';
-import { gsap } from 'gsap';
-import Navbar from './components/Navbar';
-import Footer from './components/Footer';
+import React, { useEffect, useState, useRef } from 'react'
+import LoginSpotify from './components/LoginSpotify'
+import axios from 'axios'
+import Player from './components/Player'
+import { BackgroundProvider, useBackground } from './context/BackgroundContext'
+import { gsap } from 'gsap'
+import Navbar from './components/Navbar'
+import Footer from './components/Footer'
 
 const App = () => {
-  const [token, setToken] = useState(null);
-  const [userData, setUserData] = useState(null);
-  const { backgroundColor } = useBackground(); 
-  const backgroundRef = useRef(null); 
+  const [token, setToken] = useState(null)
+  const [userData, setUserData] = useState(null)
+  const { backgroundColor } = useBackground() 
+  const backgroundRef = useRef(null) 
 
   const handleLogin = (accessToken) => {
-    setToken(accessToken);
-    localStorage.setItem('spotifyAccessToken', accessToken);
-  };
+    setToken(accessToken)
+    localStorage.setItem('spotifyAccessToken', accessToken)
+  }
 
   useEffect(() => {
-    const savedToken = localStorage.getItem('spotifyAccessToken');
+    const savedToken = localStorage.getItem('spotifyAccessToken')
     if (savedToken) {
-      setToken(savedToken);
+      setToken(savedToken)
     }
-  }, []);
+  }, [])
 
   useEffect(() => {
     if (token) {
@@ -34,17 +34,17 @@ const App = () => {
           },
         })
         .then((response) => {
-          setUserData(response.data);
+          setUserData(response.data)
         })
         .catch((error) => {
-          console.error('Error fetching user data', error);
+          console.error('Error fetching user data', error)
           if (error.response && error.response.status === 401) {
-            localStorage.removeItem('spotifyAccessToken');
-            setToken(null);
+            localStorage.removeItem('spotifyAccessToken')
+            setToken(null)
           }
-        });
+        })
     }
-  }, [token]);
+  }, [token])
 
   useEffect(() => {
     if (backgroundRef.current) {      
@@ -52,9 +52,9 @@ const App = () => {
         duration: 2,
         backgroundImage: `linear-gradient(to top right, #121212, ${backgroundColor})`,
         ease: "power1.inOut",
-      });
+      })
     }
-  }, [backgroundColor]);
+  }, [backgroundColor])
 
   return (
     <>
@@ -84,13 +84,13 @@ const App = () => {
         </div>
       </div>
     </>
-  );
-};
+  )
+}
 
 const Root = () => (
   <BackgroundProvider>
     <App />
   </BackgroundProvider>
-);
+)
 
-export default Root;
+export default Root
