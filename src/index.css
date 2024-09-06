@@ -4,7 +4,7 @@
 @tailwind utilities;
 
 
-body {
+body, html {
   @apply font-poppins;
   overflow: hidden;
 }
@@ -22,29 +22,219 @@ body {
   @apply w-10 h-10 text-sm flex justify-center items-center bg-white text-black rounded-full transition-all
 }
 
-.hero2D {
-  /* background-color: aqua; */
-  flex-grow: 1;
+.truncate-text {
+  white-space: nowrap; /* Empêche le texte de revenir à la ligne */
+  overflow: hidden;    /* Cache le texte qui dépasse */
+  text-overflow: ellipsis; /* Ajoute des points de suspension à la fin */
 }
 
-.flex-navbar {
-  /* background-color: blueviolet; */
-  flex-grow: 1;
+.hero2D {
+  flex-direction: row;
+  display: flex;
+  justify-content: center;
+  height: 70vh;
+  margin-top: 2em;
+  min-height: 60%;
 }
-.flexDiv {
-  bottom: 0px;
-  width: full;
-  /* border: 1px; */
-  /* background-color: black; */
-  flex-grow: 1;
+
+.albumContainer {
+  height: 100%;
+  width: auto;
+  margin-left: 2em;
+  margin-right: 2em;
+  margin-bottom: 2em;
+  flex-basis: auto; /* Conserve une taille automatique */
+  flex-grow: 0;
+  flex-shrink: 0; /* Empêche le conteneur de se rétrécir */
 }
+
+.albumContainer img {
+  border-radius: 5%;
+  max-width: 100%;
+  max-height: 100%;
+  object-fit: scale-down;
+}
+
+.songInfo {
+  display: flex;
+  flex-direction: column;
+  justify-content: flex-end;
+  flex-grow: 2;
+  flex-shrink: 3;
+  margin-right: 2em;
+  max-width: 60%; /* Limite la largeur maximale de songInfo */
+}
+
+.songName {
+  max-width: 100%; /* S'assure que le texte ne dépasse pas */
+}
+
+.artistContainer {
+  display: flex;
+  flex-direction: row;
+  justify-content: flex-start;
+  align-items: center;
+  gap: 1.5em;
+  margin-top: 1em;
+  max-width: 100%; /* S'assure que l'artiste et l'album ne dépassent pas */
+}
+
+.artistAlbumInfo {
+  display: flex;
+  align-items: center;
+  flex-shrink: 1; /* Permet au texte de se rétrécir si nécessaire */
+  max-width: 100%; /* Limite la largeur pour le texte artiste/album */
+}
+
+
 
 .player {
   position: fixed;
   height: 100%;
   width: 100%;
+  min-height: 200px;
+  display: flex;
   flex-direction: column;
-  justify-content: space-between;
-  /* border-width: 2px; */
-  /* border-color: blue; */
+  justify-items: center;
+}
+
+/* Home page */
+
+.footer {
+  left: 0;
+  bottom: 0;
+  width: calc(100% - 2rem); 
+  margin: 1rem; 
+  background: #212121;
+  padding: 1rem; 
+  border-radius: 1rem; 
+  z-index: 10;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  box-sizing: border-box; 
+}
+
+.Links {
+  margin-right: 2em;
+  text-decoration: underline;
+  text-underline-offset: 0.2em;
+}
+
+.Links .unavailable {
+  text-decoration: line-through;
+  text-decoration-color: #40a344;
+  text-decoration-thickness: 0.2em;
+  text-decoration-style: wavy;
+}
+
+.home {
+  display: flex;
+  height: 100vh;
+  flex-direction: column;
+  justify-content: flex-end;
+}
+
+/* button */
+.flexButtonContainer {
+  flex-grow: 2;
+  flex-shrink: 2;
+  display: flex;
+  position: fixed;
+  justify-content: center; /* Centre horizontalement */
+  align-items: center; /* Centre verticalement */
+  height: 100%; /* Utilise la hauteur de la fenêtre pour centrer verticalement */
+  width: 100vw; /* Utilise la largeur de la fenêtre pour centrer horizontalement */
+  margin: 0; /* Assurez-vous qu'il n'y a pas de marge par défaut */
+}
+
+.glowing {
+  margin: 100px;
+  padding: 15px 40px;
+  border: none;
+  outline: none;
+  color: #FFF;
+  cursor: pointer;
+  position: relative;
+  z-index: 0;
+  border-radius: 12px;
+  user-select: none; /* select-none */
+  transition: transform 0.3s ease, box-shadow 0.3s ease; /* Transition pour le zoom et l'ombre */
+}
+
+.glowing::after {
+  content: "";
+  z-index: -1;
+  position: absolute;
+  width: 100%;
+  height: 100%;
+  background-color: #56d757;
+  left: 0;
+  top: 0;
+  border-radius: 10px;
+}
+
+/* glow */
+.glowing::before {
+  content: "";
+  background: linear-gradient(
+    45deg,
+    #56d757, /* Couleur principale */
+    #4caf51, /* Couleur complémentaire verte */
+    #00c1c8, /* Teinte plus claire de vert */
+    #667fc4, /* Teinte très claire de vert */
+    #80e27e, /* Couleur verte douce */
+    #56d7a6, /* Retour à la couleur principale */
+    #4caf51, /* Ajout d'une couleur complémentaire */
+    #56d757  /* Retour à une couleur complémentaire */
+  );
+  position: absolute;
+  top: -2px;
+  left: -2px;
+  background-size: 600%;
+  z-index: -1;
+  width: calc(100% + 4px);
+  height: calc(100% + 4px);
+  filter: blur(8px);
+  animation: glowing 20s linear infinite;
+  transition: opacity 0.3s ease-in-out, transform 0.3s ease; /* Transition pour l'agrandissement */
+  border-radius: 10px;
+  opacity: 0;
+}
+
+@keyframes glowing {
+  0% { background-position: 0 0; }
+  50% { background-position: 400% 0; }
+  100% { background-position: 0 0; }
+}
+
+/* hover */
+.glowing:hover::before {
+  opacity: 1;
+  transform: scale(1.1); /* Agrandir légèrement l'effet de glow */
+}
+
+.glowing:hover {
+  transform: scale(1.1); /* Agrandir légèrement le bouton */
+}
+
+/* active state */
+.glowing:active::after {
+  background: transparent;
+}
+
+.glowing:active {
+  color: #000;
+  font-weight: bold;
+}
+
+/* Effet de brillance sur le texte "Spotify" */
+.glowing:hover .Spotify {
+  text-shadow: 0 0 5px #ffffff, 0 0 10px #ffffff, 0 0 15px #56d757, 0 0 20px #56d757, 0 0 25px #56d757, 0 0 30px #56d757, 0 0 35px #56d757;
+}
+
+.truncate-text {
+  white-space: nowrap; /* Empêche le texte de revenir à la ligne */
+  overflow: hidden;    /* Cache le texte qui dépasse */
+  text-overflow: ellipsis; /* Ajoute des points de suspension à la fin */
 }

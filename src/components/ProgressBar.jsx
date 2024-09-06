@@ -27,7 +27,7 @@ const ProgressBar = ({ trackDuration, trackProgress}) => {
   }, [trackDuration]);
 
   return (
-        <div className="mt-10 mb-5 pr-5 pl-5 w-full flex flex-col items-center select-none">
+        <div className="mt-5 mb-5  w-full flex flex-col items-center select-none">
           <div className="flex justify-between w-full text-sm mb-1">
             <span>{formatTime(progress)}</span>
             <span>{formatTime(trackDuration)}</span>

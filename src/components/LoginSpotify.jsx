@@ -1,8 +1,8 @@
 import { useEffect } from 'react'
 
 const clientId = 'aecb385327ac4193ba946575ba6fd2e2'
-// const redirectUri = 'http://localhost:4000/'
-const redirectUri = 'https://spotify-on-desk.vercel.app/'
+const redirectUri = 'http://localhost:4000/'
+// const redirectUri = 'https://spotify-on-desk.vercel.app/'
 const scopes = [
   'user-read-private',
   'user-read-email',
@@ -33,14 +33,16 @@ const LoginSpotify = ({ onLogin }) => {
   }, [onLogin])
 
   return (
-    <div className="flex justify-center items-center h-screen">
-      <button
-        onClick={handleLogin}
-        className="bg-green-500 text-white px-4 py-2 rounded-lg hover:bg-green-600 transition duration-300 select-none"
-      >
-        Connect with Spotify
-      </button>
-    </div>
+    <>
+      <div className="flexButtonContainer">
+        <button
+          onClick={handleLogin}
+          className="glowing bg-green-500 text-white px-4 py-2 rounded-lg hover:bg-green-600 transition duration-300 select-none"
+        >
+          Connect with <span className='Spotify'>Spotify</span>
+        </button>
+      </div>
+    </>
   )
 }
 

@@ -4,6 +4,8 @@ import axios from 'axios';
 import Player from './components/Player';
 import { BackgroundProvider, useBackground } from './context/BackgroundContext';
 import { gsap } from 'gsap';
+import Navbar from './components/Navbar';
+import Footer from './components/Footer';
 
 const App = () => {
   const [token, setToken] = useState(null);
@@ -70,7 +72,15 @@ const App = () => {
         {token && userData && <Player userData={userData} token={token} />}
 
         <div className="relative z-10 flex-1">
-          {!token && <LoginSpotify onLogin={handleLogin} />}
+          {!token && 
+          <>
+            <div className='home'>
+              <Navbar showButton={false}/>
+              <LoginSpotify onLogin={handleLogin} />
+              <Footer/>
+            </div>
+          </>
+          }
         </div>
       </div>
     </>

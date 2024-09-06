@@ -6,10 +6,6 @@ import axios from 'axios';
 import { useBackground } from '../context/BackgroundContext'; 
 import ColorThief from 'colorthief';
 
-const isMobileDevice = () => {
-  return /iPhone|iPad|iPod|Android/i.test(navigator.userAgent);
-};
-
 const Player = ({ userData, token }) => {
   
   const [listeningData, setListeningData] = useState(null);
@@ -19,28 +15,6 @@ const Player = ({ userData, token }) => {
   const [backgroundColor3D, setBackgroundColor3D] = useState(null)  
   const [trackEnergy, setTrackEnergy] = useState(0)  
   const { setBackgroundColor } = useBackground(); 
-
-
-
-  useEffect(() => {
-    if (isMobileDevice()) {
-      const requestFullscreen = () => {
-        const docEl = document.documentElement;
-        if (docEl.requestFullscreen) {
-          docEl.requestFullscreen();
-        } else if (docEl.mozRequestFullScreen) {
-          docEl.mozRequestFullScreen();
-        } else if (docEl.webkitRequestFullscreen) {
-          docEl.webkitRequestFullscreen();
-        } else if (docEl.msRequestFullscreen) {
-          docEl.msRequestFullscreen();
-        }
-      };
-  
-      requestFullscreen();
-    }
-  }, []);
-  
 
   useEffect(() => {
     if (!token) return;
@@ -139,14 +113,8 @@ const Player = ({ userData, token }) => {
       console.error('Error loading image');
     };
   };
-  const handleFullscreenRequest = () => {
-    if (document.documentElement.requestFullscreen) {
-      document.documentElement.requestFullscreen();
-    }
-  };
 
   const onToggle = () => {
-    handleFullscreenRequest()
     setIsToggleDimension(t => !t)        
   }  
 
@@ -157,7 +125,6 @@ const Player = ({ userData, token }) => {
         {listeningData && !isToggleDimension ? 
         <>
           <Hero listeningData={listeningData} artistImage={artistImage} />
-          <div className='flexDiv'/>
         </> : null}
         {listeningData && isToggleDimension ? <Hero3D listeningData={listeningData} artistImage={artistImage} backgroundColor={backgroundColor3D} energy={trackEnergy}/> : null}
       </div>
@@ -174,7 +141,7 @@ function calculateEnergyScore(audioFeatures) {
     valence,
 } = audioFeatures;
 
-  // Weights for ponderation
+  // Weights for ponderation (arbitrary)
   const w1 = 0.4; 
   const w2 = 0.5; 
   const w3 = 0.1; 
