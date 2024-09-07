@@ -4,7 +4,6 @@ import * as THREE from "three"
 import { shaderMaterial } from "@react-three/drei"
 import { useControls, folder } from "leva"
 import gsap from "gsap"
-import _ from "lodash"
 
 import wallVertex from "../../shaders/wall/vertex.glsl"
 import wallFragment from "../../shaders/wall/fragment.glsl"
@@ -14,11 +13,10 @@ import Water from "./Water"
 
 const WallShaderMaterial = shaderMaterial(
   {
-    uTime: 0,
     uColor: new THREE.Color("white"),
-    uLightPosition: new THREE.Vector3(0,45,0),
-		uDirectionalLightPosition: new THREE.Vector3(0, 15, -10),
-		uLightColor: new THREE.Vector3(1,1,1),
+    uLightPosition: new THREE.Vector3(0, 45, 0),
+    uDirectionalLightPosition: new THREE.Vector3(0, 15, -10),
+    uLightColor: new THREE.Vector3(1, 1, 1),
   },
   wallVertex,
   wallFragment
@@ -30,7 +28,7 @@ const LeftWallShaderMaterial = shaderMaterial(
     uColor: new THREE.Color("white"),
     uFrequency: 0.5,
     uEnergy: 0.5,
-    uLightPosition: new THREE.Vector3(0,45,0),
+    uLightPosition: new THREE.Vector3(0, 45, 0),
   },
   leftWallVertex,
   leftWallFragment
@@ -39,9 +37,7 @@ const LeftWallShaderMaterial = shaderMaterial(
 extend({ WallShaderMaterial, LeftWallShaderMaterial })
 
 const Environment = ({ backgroundColor, energy }) => {
-  console.log(energy)
-  
-  const animatedBackgroundRef = useRef(new THREE.Color("#121212"))
+  const animatedBackgroundRef = useRef(new THREE.Color("#ff0000"))
   const animatedEnergyRef = useRef({ value: 0.1 })
   const gsapTimeline = useRef(gsap.timeline())
 
@@ -65,21 +61,10 @@ const Environment = ({ backgroundColor, energy }) => {
   const updateColor = () => {
     const color = animatedBackgroundRef.current.convertLinearToSRGB()
 
-    if (topWallRef.current) {
-      topWallRef.current.uColor.set(color)
-    }
-    
-    if (leftWallRef.current) {
-      leftWallRef.current.uColor.set(color)
-    }
-
-    if (rightWallRef.current) {
-      rightWallRef.current.uColor.set(color)
-    }
-
-    if (backWallRef.current) {
-      backWallRef.current.uColor.set(color)
-    }
+    if (topWallRef.current) topWallRef.current.uColor.set(color)
+    if (leftWallRef.current) leftWallRef.current.uColor.set(color)
+    if (rightWallRef.current) rightWallRef.current.uColor.set(color)
+    if (backWallRef.current) backWallRef.current.uColor.set(color)
   }
 
   const updateEnergy = () => {
@@ -88,16 +73,16 @@ const Environment = ({ backgroundColor, energy }) => {
     }
   }
 
-  const throttledUpdateEnergy = useRef(_.throttle(updateEnergy, 100)).current
-
   useEffect(() => {
-    gsap.to(animatedBackgroundRef.current, {
+    const timeline = gsap.to(animatedBackgroundRef.current, {
       r: newColor.r,
       g: newColor.g,
       b: newColor.b,
       duration: 6,
       onUpdate: updateColor,
     })
+
+    return () => timeline.kill() 
   }, [backgroundColor])
 
   useEffect(() => {
@@ -109,6 +94,8 @@ const Environment = ({ backgroundColor, energy }) => {
       ease: "power2.out",
       onUpdate: updateEnergy,
     })
+
+    return () => gsapTimeline.current.kill() 
   }, [energy])
 
   useFrame(({ clock }) => {
@@ -117,14 +104,6 @@ const Environment = ({ backgroundColor, energy }) => {
     if (leftWallRef.current) {
       leftWallRef.current.uTime = elapsedTime
       leftWallRef.current.uFrequency = frequency
-    }
-
-    if (rightWallRef.current) {
-      rightWallRef.current.uTime = elapsedTime
-    }
-
-    if (backWallRef.current) {
-      backWallRef.current.uTime = elapsedTime
     }
   })
 
@@ -148,16 +127,13 @@ const Environment = ({ backgroundColor, energy }) => {
           <wallShaderMaterial ref={rightWallRef} />
         </mesh>
 
-        <mesh 
-          scale={100} 
-          position={[0, 0, -45]}
-        >
+        <mesh scale={100} position={[0, 0, -45]}>
           <planeGeometry />
           <wallShaderMaterial ref={backWallRef} />
         </mesh>
 
-        <mesh 
-          rotation={[ Math.PI /2, 0 ,3* Math.PI / 2 ]}
+        <mesh
+          rotation={[Math.PI / 2, 0, (3 * Math.PI) / 2]}
           scale={100}
           position={[0, 44, 0]}
         >

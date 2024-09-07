@@ -11,12 +11,12 @@ const FloorShaderMaterial = shaderMaterial(
   {
     uTime: 0,
     uColor: new THREE.Color("black"),
-    uLightPosition: new THREE.Vector3(0,45,0),
-		uDirectionalLightPosition: new THREE.Vector3(0, 15, -10),
-		uLightColor: new THREE.Vector3(1,1,1),
-		uWavesStrength: 0.1,
+    uLightPosition: new THREE.Vector3(0, 45, 0),
+    uDirectionalLightPosition: new THREE.Vector3(0, 15, -10),
+    uLightColor: new THREE.Vector3(1, 1, 1),
+    uWavesStrength: 0.1,
     uMoveFactor: 0,
-		tDiffuse: null,
+    tDiffuse: null,
     tDudv: null,
     tNormal: null,
   },
@@ -27,56 +27,73 @@ const FloorShaderMaterial = shaderMaterial(
 extend({ FloorShaderMaterial })
 
 const Water = () => {
-
-const {wavesStrength} = useControls({
-	waves : folder({
-		wavesStrength: 0.05,
-	})
-})
+  const { wavesStrength } = useControls({
+    waves: folder({
+      wavesStrength: 0.05,
+    }),
+  })
 
   const floorRef = useRef()
 
-  const dudvTexture = useLoader(THREE.TextureLoader, './3D/water/waterDUDV.png')
-	dudvTexture.wrapS = THREE.RepeatWrapping
-	dudvTexture.wrapT = THREE.RepeatWrapping
-	dudvTexture.minFilter = THREE.LinearFilter
-	dudvTexture.magFilter = THREE.LinearFilter
-  const normalTexture = useLoader(THREE.TextureLoader, './3D/water/normal.png')
+  const dudvTexture = useMemo(() => {
+    const texture = useLoader(THREE.TextureLoader, './3D/water/waterDUDV.png')
+    texture.wrapS = THREE.RepeatWrapping
+    texture.wrapT = THREE.RepeatWrapping
+    texture.minFilter = THREE.LinearFilter
+    texture.magFilter = THREE.LinearFilter
+    return texture
+  }, [])
+
+  const normalTexture = useMemo(() => {
+    return useLoader(THREE.TextureLoader, './3D/water/normal.png')
+  }, [])
 
   const { gl: renderer, scene, camera } = useThree()
-	
-	const renderTarget = useMemo(() => new THREE.WebGLRenderTarget(1024, 1024), [])
+
+  const renderTargetA = useMemo(() => new THREE.WebGLRenderTarget(1024, 1024), []);
+  const renderTargetB = useMemo(() => new THREE.WebGLRenderTarget(1024, 1024), []);
+  let currentTarget = renderTargetA;
+  let previousTarget = renderTargetB;
+  
   useFrame(({ clock }) => {
-    const elapsedTime = clock.getElapsedTime()
-
+    const elapsedTime = clock.getElapsedTime();
+  
     if (floorRef.current) {
-      floorRef.current.uTime = elapsedTime
-      floorRef.current.uMoveFactor = (elapsedTime * 0.015) % 1			 
-      floorRef.current.uMoveFactor %= 1
-      floorRef.current.uWavesStrength = wavesStrength			
-
-      renderer.setRenderTarget(renderTarget)
-      renderer.render(scene, camera)
-      renderer.setRenderTarget(null)
-			
-			const diffuseTexture = renderTarget.texture
-			diffuseTexture.colorSpace = THREE.LinearSRGBColorSpace
-			
-      floorRef.current.tDiffuse = diffuseTexture
-      renderer.render(scene, camera)
+      floorRef.current.uTime = elapsedTime;
+      floorRef.current.uMoveFactor = (elapsedTime * 0.015) % 1;
+  
+      renderer.setRenderTarget(currentTarget);
+      renderer.clear()
+      renderer.render(scene, camera);
+      renderer.setRenderTarget(null);
+  
+      const diffuseTexture = previousTarget.texture;
+      diffuseTexture.colorSpace = THREE.LinearSRGBColorSpace;
+      floorRef.current.tDiffuse = diffuseTexture;
+  
+      [currentTarget, previousTarget] = [previousTarget, currentTarget];
+  
+      renderer.render(scene, camera);
     }
-  })
+  });
 
   useEffect(() => {
-    if(floorRef.current)
+    if (floorRef.current) {
       floorRef.current.tDudv = dudvTexture
       floorRef.current.tNormal = normalTexture
-  }, [floorRef.current])
+    }
+  }, [dudvTexture, normalTexture])
+
+  useEffect(() => {
+    if (floorRef.current) {
+      floorRef.current.uWavesStrength = wavesStrength
+    }
+  }, [wavesStrength])
 
   return (
     <>
       {/* Floor */}
-      <mesh rotation={[-Math.PI / 2 , 0, 0]} scale={100} position={[0, -5, 0]}>
+      <mesh rotation={[-Math.PI / 2, 0, 0]} scale={100} position={[0, -5, 0]}>
         <planeGeometry args={[1, 1, 8, 8]} />
         <floorShaderMaterial ref={floorRef} />
       </mesh>
