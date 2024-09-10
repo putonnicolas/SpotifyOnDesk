@@ -39,6 +39,9 @@ body, html {
 
 .albumContainer {
   height: 100%;
+  display: flex;
+  justify-content: flex-end;
+  align-items: end;
   width: auto;
   margin-left: 2em;
   margin-right: 2em;

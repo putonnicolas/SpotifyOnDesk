@@ -37,7 +37,7 @@ const LeftWallShaderMaterial = shaderMaterial(
 extend({ WallShaderMaterial, LeftWallShaderMaterial })
 
 const Environment = ({ backgroundColor, energy }) => {
-  const animatedBackgroundRef = useRef(new THREE.Color("#ff0000"))
+  const animatedBackgroundRef = useRef(new THREE.Color("#121212"))
   const animatedEnergyRef = useRef({ value: 0.1 })
   const gsapTimeline = useRef(gsap.timeline())
 
