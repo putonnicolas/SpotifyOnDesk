@@ -32,17 +32,21 @@ To get started with **Spotify on Desk**, follow these steps:
 
 1. **Clone the Repository**:
    ```bash
-   git clone https://github.com/putonnicolas/spotify-on-desk.git
-   cd spotify-on-desk
+   git clone https://github.com/putonnicolas/SpotifyOnDesk.git
+   cd SpotifyOnDesk
 
 
 2. **Install Dependencies**:
    ```bash
    npm install
 
-3. Go on [Spotify developer's website](https://developer.spotify.com/) and create a new app on your personnal dashboard.
+3. Go on [Spotify developer's website](https://developer.spotify.com/) and create a new app on your personnal dashboard. Please be sure to use :
+    - Web API
+    - Web Playback SDK
 
-4. Set Up Environment Variables: Create a .env file in the root directory and add your Spotify API credentials:
+    And set the right redirect URL, for example : http://localhost:4000/
+
+4. Set Up Environment Variables: Create a *.env* file in the root directory and add your Spotify API credentials:
    ```bash
    VITE_SPOTIFY_CLIENT_ID=your_client_id
    VITE_REDIRECT_URI=your_redirect_url
