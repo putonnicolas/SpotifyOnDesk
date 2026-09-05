@@ -40,22 +40,25 @@ To get started with **Spotify on Desk**, follow these steps:
    ```bash
    npm install
 
-3. Go on [Spotify developer's website](https://developer.spotify.com/) and create a new app on your personnal dashboard. Please be sure to use :
-    - Web API
-    - Web Playback SDK
+3. Go on [Spotify developer's website](https://developer.spotify.com/) and create a new app on your personal dashboard.
+    - Choose **Web API** (and Web Playback SDK if prompted).
+    - Set the Redirect URI in your Spotify app settings:
+      - For local development: `http://127.0.0.1:4000/` *(Note: Spotify rejects `localhost`, use `127.0.0.1`)*
+      - For production (e.g. Vercel): `https://your-app.vercel.app/`
+    - Make sure your Spotify account is added under **Users and Access** if your app is in Development Mode.
 
-    And set the right redirect URL, for example : http://localhost:4000/
-
-4. Set Up Environment Variables: Create a *.env* file in the root directory and add your Spotify API credentials:
+4. Set Up Environment Variables: Create a *.env* file in the root directory and add your Spotify API credentials (see `.env.example`):
    ```bash
    VITE_SPOTIFY_CLIENT_ID=your_client_id
-   VITE_REDIRECT_URI=your_redirect_url
+   VITE_REDIRECT_URI=http://127.0.0.1:4000/
+   ```
 
 5. Start the Development Server:   
     ```bash
     npm run dev
+    ```
 
-6. Open Your Browser: Navigate to http://localhost:4000 to see the application in action.
+6. Open Your Browser: Navigate to http://127.0.0.1:4000 to see the application in action.
 
 Usage
 + Connect to Spotify: Follow the on-screen instructions to authenticate with your Spotify account.

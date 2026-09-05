@@ -2,12 +2,12 @@ import React, { useEffect, useState } from 'react'
 import Hero from './Hero.jsx'
 import Navbar from './Navbar.jsx'
 import Hero3D from './Hero3D.jsx'
-import axios from 'axios'
 import { useBackground } from '../context/BackgroundContext' 
 import NoCurrentMusic from './NoCurrentMusic.jsx'
 import ColorThief from 'colorthief'
+import { spotifyApi } from '../services/spotifyAuth'
 
-const Player = ({ userData, token }) => {
+const Player = ({ userData, token, onLogout }) => {
   
   const [listeningData, setListeningData] = useState(null)
   const [artistImage, setArtistImage] = useState(null)
@@ -21,12 +21,8 @@ const Player = ({ userData, token }) => {
     if (!token) return
 
     const fetchCurrentTrack = () => {
-      axios
-        .get('https://api.spotify.com/v1/me/player/currently-playing', {
-          headers: {
-            Authorization: `Bearer ${token}`,
-          },
-        })
+      spotifyApi
+        .get('/me/player/currently-playing')
         .then((response) => {
           if (response.data) {
             const newListeningData = response.data
@@ -50,16 +46,15 @@ const Player = ({ userData, token }) => {
         })
         .catch((error) => {
           console.error('Error fetching current track', error)
+          if (error.response && error.response.status === 401 && onLogout) {
+            onLogout()
+          }
         })
     }
 
     const fetchArtistImage = (artist) => {
-      axios
-        .get(`https://api.spotify.com/v1/artists/${artist.id}`, {
-          headers: {
-            Authorization: `Bearer ${token}`,
-          },
-        })
+      spotifyApi
+        .get(`/artists/${artist.id}`)
         .then((response) => {
           if (response.data) {
             setArtistImage(response.data.images[0])            
@@ -71,19 +66,19 @@ const Player = ({ userData, token }) => {
     }
 
     const fetchAudioFeatures = (id) => {      
-      axios
-      .get(`https://api.spotify.com/v1/audio-features/${id}`, 
-      {
-        headers: {
-          Authorization: `Bearer ${token}`,
-        },
-      })
-      .then((response) => {        
-        if(response.data){
-          const energy = calculateEnergyScore(response.data)          
-          setTrackEnergy(energy)   
-        }
-      })
+      spotifyApi
+        .get(`/audio-features/${id}`)
+        .then((response) => {        
+          if(response.data){
+            const energy = calculateEnergyScore(response.data)          
+            setTrackEnergy(energy)   
+          }
+        })
+        .catch((error) => {
+          // Spotify deprecated audio-features on Nov 27, 2024 (returns 403 for development apps)
+          console.warn('Audio features unavailable (Spotify API restricted endpoint):', error?.response?.status || error?.message)
+          setTrackEnergy(0.5) // Fallback default energy
+        })
     }
 
     fetchCurrentTrack()
