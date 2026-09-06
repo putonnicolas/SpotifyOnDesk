@@ -26,8 +26,13 @@ const App = () => {
     setUserData(null)
   }
 
+  const authInitializedRef = useRef(false)
+
   // Handle OAuth callback or restore session on mount
   useEffect(() => {
+    if (authInitializedRef.current) return
+    authInitializedRef.current = true
+
     const initAuth = async () => {
       setAuthLoading(true)
       setAuthError(null)

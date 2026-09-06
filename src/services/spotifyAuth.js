@@ -53,10 +53,27 @@ export async function redirectToSpotifyAuth() {
     return
   }
 
+  // Ensure origin consistency between current page and REDIRECT_URI
+  try {
+    const redirectUrl = new URL(REDIRECT_URI)
+    if (
+      window.location.hostname === 'localhost' &&
+      redirectUrl.hostname === '127.0.0.1'
+    ) {
+      // Move to 127.0.0.1 before initiating OAuth to keep localStorage origin identical
+      window.location.href = `http://127.0.0.1:${window.location.port || '4000'}${window.location.pathname}`
+      return
+    }
+  } catch (e) {
+    // Ignore URL parse error if relative
+  }
+
   const verifier = generateRandomString(64)
   const challenge = base64UrlEncode(await sha256(verifier))
 
+  // Store in both localStorage and sessionStorage for maximum reliability
   localStorage.setItem('spotify_code_verifier', verifier)
+  sessionStorage.setItem('spotify_code_verifier', verifier)
 
   const params = new URLSearchParams({
     client_id: CLIENT_ID,
@@ -88,40 +105,68 @@ export function storeTokens(data) {
   }
 }
 
+// In-flight promise to prevent concurrent calls (React 18 StrictMode mount double-execution)
+let authCallbackPromise = null
+
 /**
  * Exchange the authorization code returned by Spotify for tokens
  */
 export async function handleAuthCallback(code) {
-  const verifier = localStorage.getItem('spotify_code_verifier')
-  if (!verifier) {
-    throw new Error('Code verifier missing from localStorage. Please try logging in again.')
+  if (authCallbackPromise) {
+    return authCallbackPromise
   }
 
-  const params = new URLSearchParams({
-    client_id: CLIENT_ID,
-    grant_type: 'authorization_code',
-    code,
-    redirect_uri: REDIRECT_URI,
-    code_verifier: verifier,
-  })
+  authCallbackPromise = (async () => {
+    const verifier =
+      localStorage.getItem('spotify_code_verifier') ||
+      sessionStorage.getItem('spotify_code_verifier')
 
-  const response = await fetch('https://accounts.spotify.com/api/token', {
-    method: 'POST',
-    headers: {
-      'Content-Type': 'application/x-www-form-urlencoded',
-    },
-    body: params.toString(),
-  })
+    if (!verifier) {
+      // If code was already exchanged by a prior render, check if active token exists
+      const existingToken = getStoredAccessToken()
+      if (existingToken && !isTokenExpired()) {
+        return existingToken
+      }
+      throw new Error(
+        'Code verifier missing from localStorage. Please ensure you are opening the app on the same origin (e.g. 127.0.0.1 vs localhost) and try logging in again.'
+      )
+    }
 
-  const data = await response.json()
+    const params = new URLSearchParams({
+      client_id: CLIENT_ID,
+      grant_type: 'authorization_code',
+      code,
+      redirect_uri: REDIRECT_URI,
+      code_verifier: verifier,
+    })
 
-  if (!response.ok) {
-    throw new Error(data.error_description || data.error || 'Failed to exchange authorization code')
+    const response = await fetch('https://accounts.spotify.com/api/token', {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/x-www-form-urlencoded',
+      },
+      body: params.toString(),
+    })
+
+    const data = await response.json()
+
+    if (!response.ok) {
+      throw new Error(
+        data.error_description || data.error || 'Failed to exchange authorization code'
+      )
+    }
+
+    localStorage.removeItem('spotify_code_verifier')
+    sessionStorage.removeItem('spotify_code_verifier')
+    storeTokens(data)
+    return data.access_token
+  })()
+
+  try {
+    return await authCallbackPromise
+  } finally {
+    authCallbackPromise = null
   }
-
-  localStorage.removeItem('spotify_code_verifier')
-  storeTokens(data)
-  return data.access_token
 }
 
 export function getStoredAccessToken() {
@@ -200,6 +245,7 @@ export function logout() {
   localStorage.removeItem('spotify_refresh_token')
   localStorage.removeItem('spotify_token_expires_at')
   localStorage.removeItem('spotify_code_verifier')
+  sessionStorage.removeItem('spotify_code_verifier')
   localStorage.removeItem('spotifyAccessToken') // Clean legacy key
 }
 
