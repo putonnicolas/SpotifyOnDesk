@@ -104,8 +104,12 @@ const App = () => {
           setUserData(response.data)
         })
         .catch((error) => {
-          console.error('Error fetching user data', error)
+          console.error('Error fetching user data:', error?.response?.data || error)
           if (error.response && error.response.status === 401) {
+            handleLogout()
+          } else if (error.response && error.response.status === 403) {
+            const msg = error.response.data?.error?.message || '403 Forbidden'
+            setAuthError(`Spotify access error (403): ${msg}. If your Spotify app is in Development Mode, verify that your Spotify account email is added under "Users and Access" in the Spotify Developer Dashboard.`)
             handleLogout()
           }
         })
