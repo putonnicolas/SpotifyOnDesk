@@ -138,8 +138,8 @@ const App = () => {
         }}
       />
 
-      {token && userData && (
-        <Player userData={userData} token={token} onLogout={handleLogout} />
+      {token && (
+        <Player token={token} onLogout={handleLogout} />
       )}
 
       <div className="relative z-10 flex-1">

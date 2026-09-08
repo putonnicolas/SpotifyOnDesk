@@ -7,7 +7,7 @@ import NoCurrentMusic from './NoCurrentMusic.jsx'
 import ColorThief from 'colorthief'
 import { spotifyApi } from '../services/spotifyAuth'
 
-const Player = ({ userData, token, onLogout }) => {
+const Player = ({ token, onLogout }) => {
   
   const [listeningData, setListeningData] = useState(null)
   const [artistImage, setArtistImage] = useState(null)
@@ -45,7 +45,7 @@ const Player = ({ userData, token, onLogout }) => {
           }
         })
         .catch((error) => {
-          console.error('Error fetching current track', error)
+          console.error('Error fetching current track:', error?.response?.data || error)
           if (error.response && error.response.status === 401 && onLogout) {
             onLogout()
           }
@@ -117,7 +117,6 @@ const Player = ({ userData, token, onLogout }) => {
   return (
       <div className='player'>
         <Navbar onToggle={onToggle} isToggled={isToggleDimension}/>
-        {!userData && token && <div>Loading data...</div>}
         { !listeningData && <NoCurrentMusic/>}
         {listeningData && !isToggleDimension ? 
         <>
