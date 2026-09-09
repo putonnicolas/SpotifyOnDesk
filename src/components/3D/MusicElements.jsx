@@ -1,72 +1,58 @@
 import * as THREE from "three"
-import { Text, Float} from "@react-three/drei"
+import { Text, Float } from "@react-three/drei"
 import ProgressBar3D from "./ProgressBar3D"
 import { useLoader } from "@react-three/fiber"
 import { useEffect } from "react"
 
-
-const musicElements = ({ listeningData, artistImage }) => {  
-
-  const Image = ({ texture, position, circle, scale }) => {
-    return (
-      <mesh position={position} scale={scale}>
-        {circle ? <circleGeometry args={[2, 32]} /> : <planeGeometry args={[5, 5]} />}
-        <meshBasicMaterial map={texture} />
-      </mesh>
-    )
-  }
-
-  /**
-   * Text
-   */
-  
-  const artistsName = listeningData.item.artists.map((artist) => artist.name)
-  const artists = artistsName.join(", ")
-  
-  const songName = listeningData.item.name
-  const albumName = '  ·  ' + listeningData.item.album.name
-  
-  const fontSize = 0.75
-  const charWidth = 0.5 * fontSize
-  const artistsTextWidth = artists.length > 15 ? 18 * charWidth : artists.length * charWidth
-  
-  /**
-   *  Textures
-   */
-  
-  const albumURL = listeningData.item.album.images[0]?.url || ''
-  const artistURL = artistImage ? artistImage.url : ''
-
-  const albumTexture = useLoader(THREE.TextureLoader, albumURL)
-  const artistTexture = artistURL ? useLoader(THREE.TextureLoader, artistURL) : ''
+const TextureImage = ({ url, position, scale, circle }) => {
+  const texture = useLoader(THREE.TextureLoader, url)
 
   useEffect(() => {
     return () => {
-      albumTexture.dispose()
-      artistURL ? artistTexture.dispose() : null
+      texture?.dispose()
     }
-  }, [albumTexture, artistTexture])
+  }, [texture])
 
+  return (
+    <mesh position={position} scale={scale}>
+      {circle ? <circleGeometry args={[2, 32]} /> : <planeGeometry args={[5, 5]} />}
+      <meshBasicMaterial map={texture} />
+    </mesh>
+  )
+}
+
+const MusicElements = ({ listeningData, artistImage }) => {
+  const item = listeningData?.item
+  const artistsName = item?.artists?.map((artist) => artist.name) || []
+  const artists = artistsName.join(", ") || "Unknown Artist"
+
+  const songName = item?.name || "Unknown Track"
+  const albumName = item?.album?.name ? `  ·  ${item.album.name}` : ""
+
+  const fontSize = 0.75
+  const charWidth = 0.5 * fontSize
+  const artistsTextWidth =
+    artists.length > 15 ? 18 * charWidth : artists.length * charWidth
+
+  const albumURL = item?.album?.images?.[0]?.url || ""
+  const artistURL = artistImage?.url || ""
 
   return (
     <group position={[0, 15, -10]} scale={2}>
       {/* Image album */}
-      <Float
-        floatIntensity={2}
-        speed={2}
-      >
-        <Image
-          position={[-5.5, 0, 0]}
-          scale={1.5}
-          texture={albumTexture}
-        />
-      </Float>
+      {albumURL && (
+        <Float floatIntensity={2} speed={2}>
+          <TextureImage
+            position={[-5.5, 0, 0]}
+            scale={1.5}
+            url={albumURL}
+          />
+        </Float>
+      )}
 
-      <group position={[1,0,0]} >
-        {/* Song name  */}
-        <Float
-          floatIntensity={0.3}
-        >
+      <group position={[1, 0, 0]}>
+        {/* Song name */}
+        <Float floatIntensity={0.3}>
           <Text
             position={[-1, 0.5, 0]}
             anchorX="left"
@@ -75,20 +61,20 @@ const musicElements = ({ listeningData, artistImage }) => {
             fontSize={1.25}
             maxWidth={20}
           >
-            {songName.length > 25 ? songName.slice(0,25) + '...' : songName}
+            {songName.length > 25 ? songName.slice(0, 25) + "..." : songName}
           </Text>
         </Float>
 
-        {/* Artist  */}
-        <Float
-          floatIntensity={0.3}
-        >
-          <Image
-            texture={artistTexture}
-            position={[-0.5, -2, 0]}
-            scale={0.5}
-            circle={true}
-          />
+        {/* Artist */}
+        <Float floatIntensity={0.3}>
+          {artistURL && (
+            <TextureImage
+              url={artistURL}
+              position={[-0.5, -2, 0]}
+              scale={0.5}
+              circle={true}
+            />
+          )}
           <Text
             position={[1.5, -2, 0]}
             font="./fonts/Poppins-Light.ttf"
@@ -97,10 +83,8 @@ const musicElements = ({ listeningData, artistImage }) => {
             color="#9ca3af"
             maxWidth={8}
           >
-            {artists.length > 18 ? artists.slice(0,15) + '...': artists }
+            {artists.length > 18 ? artists.slice(0, 15) + "..." : artists}
           </Text>
-
-          {/* Album name */}
           <Text
             position={[1.5 + artistsTextWidth, -2, 0]}
             font="./fonts/Poppins-ExtraLight.ttf"
@@ -108,25 +92,22 @@ const musicElements = ({ listeningData, artistImage }) => {
             anchorX="left"
             color="#9ca3af"
             maxWidth={10}
-
           >
-            {`${albumName.length > 23 ? albumName.slice(0, 20) + '...' : albumName }`}
+            {albumName.length > 20
+              ? albumName.slice(0, 20) + "..."
+              : albumName}
           </Text>
         </Float>
-      </group>
 
-      <Float
-        floatIntensity={0.1}
-        speed={2.25}
-      >
-        <ProgressBar3D
-          trackDuration={listeningData.item.duration_ms} 
-          trackProgress={listeningData.progress_ms} 
-          is3D={true}
-        />
-      </Float>
+        {item?.duration_ms && (
+          <ProgressBar3D
+            trackDuration={item.duration_ms}
+            trackProgress={listeningData.progress_ms || 0}
+          />
+        )}
+      </group>
     </group>
   )
 }
 
-export default musicElements
+export default MusicElements
