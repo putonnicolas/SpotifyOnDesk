@@ -11,12 +11,16 @@ import {
   logout,
   spotifyApi,
 } from './services/spotifyAuth'
+import { demoTracks } from './constants/demoTracks'
 
 const App = () => {
   const [token, setToken] = useState(null)
   const [userData, setUserData] = useState(null)
   const [authLoading, setAuthLoading] = useState(true)
   const [authError, setAuthError] = useState(null)
+  const [isDemo, setIsDemo] = useState(false)
+  const [demoIndex, setDemoIndex] = useState(0)
+
   const { backgroundColor } = useBackground()
   const backgroundRef = useRef(null)
 
@@ -24,6 +28,14 @@ const App = () => {
     logout()
     setToken(null)
     setUserData(null)
+  }
+
+  const handleStartDemo = () => {
+    setIsDemo(true)
+  }
+
+  const handleExitDemo = () => {
+    setIsDemo(false)
   }
 
   const authInitializedRef = useRef(false)
@@ -90,12 +102,12 @@ const App = () => {
       } else if (!activeToken) {
         handleLogout()
       }
-    }, 4 * 60 * 1000) // check every 4 minutes
+    }, 4 * 60 * 1000)
 
     return () => clearInterval(intervalId)
   }, [token])
 
-  // Fetch current user profile whenever token is available
+  // Optional background user profile check (non-blocking)
   useEffect(() => {
     if (token) {
       spotifyApi
@@ -104,12 +116,8 @@ const App = () => {
           setUserData(response.data)
         })
         .catch((error) => {
-          console.error('Error fetching user data:', error?.response?.data || error)
+          console.warn('User profile /me endpoint returned error:', error?.response?.status || error)
           if (error.response && error.response.status === 401) {
-            handleLogout()
-          } else if (error.response && error.response.status === 403) {
-            const msg = error.response.data?.error?.message || '403 Forbidden'
-            setAuthError(`Spotify access error (403): ${msg}. If your Spotify app is in Development Mode, verify that your Spotify account email is added under "Users and Access" in the Spotify Developer Dashboard.`)
             handleLogout()
           }
         })
@@ -138,12 +146,18 @@ const App = () => {
         }}
       />
 
-      {token && (
-        <Player token={token} onLogout={handleLogout} />
-      )}
-
-      <div className="relative z-10 flex-1">
-        {!token && (
+      {token || isDemo ? (
+        <Player
+          token={token}
+          onLogout={handleLogout}
+          isDemo={isDemo}
+          demoTracks={demoTracks}
+          demoIndex={demoIndex}
+          onSelectDemoIndex={setDemoIndex}
+          onExitDemo={handleExitDemo}
+        />
+      ) : (
+        <div className="relative z-10 flex-1">
           <div className="home">
             <Navbar showButton={false} />
             {authLoading ? (
@@ -153,12 +167,12 @@ const App = () => {
                 </p>
               </div>
             ) : (
-              <LoginSpotify error={authError} />
+              <LoginSpotify error={authError} onStartDemo={handleStartDemo} />
             )}
             <Footer />
           </div>
-        )}
-      </div>
+        </div>
+      )}
     </div>
   )
 }
