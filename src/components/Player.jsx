@@ -21,9 +21,9 @@ const Player = ({
   const [artistImage, setArtistImage] = useState(null)
   const [oldArtist, setOldArtist] = useState('')
   const [isToggleDimension, setIsToggleDimension] = useState(false)
-  const [backgroundColor3D, setBackgroundColor3D] = useState(null)  
-  const [trackEnergy, setTrackEnergy] = useState(0.5)  
-  const { setBackgroundColor } = useBackground() 
+  const { backgroundColor, setBackgroundColor } = useBackground()
+  const [backgroundColor3D, setBackgroundColor3D] = useState(backgroundColor || '#1f1f1f')  
+  const [trackEnergy, setTrackEnergy] = useState(0.5) 
 
   // Search feature in Demo Mode
   const [showSearch, setShowSearch] = useState(false)

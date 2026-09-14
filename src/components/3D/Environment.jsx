@@ -13,7 +13,7 @@ import Water from "./Water"
 
 const WallShaderMaterial = shaderMaterial(
   {
-    uColor: new THREE.Color("white"),
+    uColor: new THREE.Color("#121212"),
     uLightPosition: new THREE.Vector3(0, 45, 0),
     uDirectionalLightPosition: new THREE.Vector3(0, 15, -10),
     uLightColor: new THREE.Vector3(1, 1, 1),
@@ -25,7 +25,7 @@ const WallShaderMaterial = shaderMaterial(
 const LeftWallShaderMaterial = shaderMaterial(
   {
     uTime: 0,
-    uColor: new THREE.Color("white"),
+    uColor: new THREE.Color("#121212"),
     uFrequency: 0.5,
     uEnergy: 0.5,
     uLightPosition: new THREE.Vector3(0, 45, 0),
@@ -37,11 +37,15 @@ const LeftWallShaderMaterial = shaderMaterial(
 extend({ WallShaderMaterial, LeftWallShaderMaterial })
 
 const Environment = ({ backgroundColor, energy }) => {
-  const animatedBackgroundRef = useRef(new THREE.Color("#121212"))
-  const animatedEnergyRef = useRef({ value: 0.1 })
-  const gsapTimeline = useRef(gsap.timeline())
+  // Store the interpolated color in a single persistent THREE.Color
+  const currentColorRef = useRef(new THREE.Color(backgroundColor || "#121212"))
+  const tweenObj = useRef({
+    r: currentColorRef.current.r,
+    g: currentColorRef.current.g,
+    b: currentColorRef.current.b,
+  })
 
-  const newColor = new THREE.Color(backgroundColor)
+  const animatedEnergyRef = useRef({ value: energy || 0.1 })
 
   const { frequency } = useControls({
     environment: folder({
@@ -58,44 +62,55 @@ const Environment = ({ backgroundColor, energy }) => {
   const rightWallRef = useRef()
   const backWallRef = useRef()
 
-  const updateColor = () => {
-    const color = animatedBackgroundRef.current.convertLinearToSRGB()
+  const applyUniformColors = () => {
+    currentColorRef.current.setRGB(
+      tweenObj.current.r,
+      tweenObj.current.g,
+      tweenObj.current.b
+    )
 
-    if (topWallRef.current) topWallRef.current.uColor.set(color)
-    if (leftWallRef.current) leftWallRef.current.uColor.set(color)
-    if (rightWallRef.current) rightWallRef.current.uColor.set(color)
-    if (backWallRef.current) backWallRef.current.uColor.set(color)
+    if (topWallRef.current?.uColor) topWallRef.current.uColor.copy(currentColorRef.current)
+    if (leftWallRef.current?.uColor) leftWallRef.current.uColor.copy(currentColorRef.current)
+    if (rightWallRef.current?.uColor) rightWallRef.current.uColor.copy(currentColorRef.current)
+    if (backWallRef.current?.uColor) backWallRef.current.uColor.copy(currentColorRef.current)
   }
 
-  const updateEnergy = () => {
-    if (leftWallRef.current) {
-      leftWallRef.current.uEnergy = animatedEnergyRef.current.value
-    }
-  }
-
+  // Set initial colors on mount
   useEffect(() => {
-    const timeline = gsap.to(animatedBackgroundRef.current, {
-      r: newColor.r,
-      g: newColor.g,
-      b: newColor.b,
-      duration: 6,
-      onUpdate: updateColor,
+    applyUniformColors()
+  }, [])
+
+  // Smooth color tweening without mutating or converting in-place
+  useEffect(() => {
+    if (!backgroundColor) return
+    const target = new THREE.Color(backgroundColor)
+
+    const tween = gsap.to(tweenObj.current, {
+      r: target.r,
+      g: target.g,
+      b: target.b,
+      duration: 2.5,
+      ease: "power2.out",
+      onUpdate: applyUniformColors,
     })
 
-    return () => timeline.kill() 
+    return () => tween.kill()
   }, [backgroundColor])
 
+  // Smooth energy score tweening
   useEffect(() => {
-    gsapTimeline.current.clear()
-
-    gsapTimeline.current.to(animatedEnergyRef.current, {
+    const tween = gsap.to(animatedEnergyRef.current, {
       value: energy,
-      duration: 5,
+      duration: 2.5,
       ease: "power2.out",
-      onUpdate: updateEnergy,
+      onUpdate: () => {
+        if (leftWallRef.current) {
+          leftWallRef.current.uEnergy = animatedEnergyRef.current.value
+        }
+      },
     })
 
-    return () => gsapTimeline.current.kill() 
+    return () => tween.kill()
   }, [energy])
 
   useFrame(({ clock }) => {
@@ -109,38 +124,44 @@ const Environment = ({ backgroundColor, energy }) => {
 
   return (
     <>
-      <Water />
+      {/* Lights */}
+      <directionalLight
+        position={[0, 45, 0]}
+        intensity={1}
+        rotation={[-Math.PI / 2, 0, 0]}
+      />
 
       {/* Walls */}
-      <group position={[0, 44, 0]}>
-        <mesh rotation={[0, Math.PI / 2, 0]} scale={100} position={[-45, 0, 0]}>
-          <planeGeometry args={[1, 1, 8, 8]} />
-          <leftWallShaderMaterial ref={leftWallRef} />
-        </mesh>
+      {/* Top Wall */}
+      <mesh position={[0, 45, 0]} rotation={[Math.PI / 2, 0, 0]}>
+        <planeGeometry args={[100, 100, 1, 1]} />
+        <wallShaderMaterial ref={topWallRef} />
+      </mesh>
 
-        <mesh
-          rotation={[(3 * Math.PI) / 2, -Math.PI / 2, 0]}
-          scale={100}
-          position={[45, 0, 0]}
-        >
-          <planeGeometry />
-          <wallShaderMaterial ref={rightWallRef} />
-        </mesh>
+      {/* Left Wall (Noise + Dynamic Energy) */}
+      <mesh
+        rotation={[0, Math.PI / 2, 0]}
+        position={[-50, 0, 0]}
+        scale={[1, 1, 1]}
+      >
+        <planeGeometry args={[100, 100, 1, 1]} />
+        <leftWallShaderMaterial ref={leftWallRef} />
+      </mesh>
 
-        <mesh scale={100} position={[0, 0, -45]}>
-          <planeGeometry />
-          <wallShaderMaterial ref={backWallRef} />
-        </mesh>
+      {/* Back Wall */}
+      <mesh position={[0, 0, -50]}>
+        <planeGeometry args={[100, 100, 1, 1]} />
+        <wallShaderMaterial ref={backWallRef} />
+      </mesh>
 
-        <mesh
-          rotation={[Math.PI / 2, 0, (3 * Math.PI) / 2]}
-          scale={100}
-          position={[0, 44, 0]}
-        >
-          <planeGeometry />
-          <wallShaderMaterial ref={topWallRef} />
-        </mesh>
-      </group>
+      {/* Right Wall */}
+      <mesh rotation={[0, -Math.PI / 2, 0]} position={[50, 0, 0]}>
+        <planeGeometry args={[100, 100, 1, 1]} />
+        <wallShaderMaterial ref={rightWallRef} />
+      </mesh>
+
+      {/* Reflective Water Floor */}
+      <Water />
     </>
   )
 }

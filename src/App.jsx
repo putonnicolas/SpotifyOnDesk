@@ -1,4 +1,5 @@
 import React, { useEffect, useState, useRef } from 'react'
+import * as THREE from 'three'
 import LoginSpotify from './components/LoginSpotify'
 import Player from './components/Player'
 import { BackgroundProvider, useBackground } from './context/BackgroundContext'
@@ -124,14 +125,41 @@ const App = () => {
     }
   }, [token])
 
+  const currentRgbRef = useRef({ r: 31, g: 31, b: 31 })
+
   useEffect(() => {
-    if (backgroundRef.current) {
-      gsap.to(backgroundRef.current, {
-        duration: 2,
-        backgroundImage: `linear-gradient(to top right, #121212, ${backgroundColor})`,
-        ease: 'power1.inOut',
-      })
+    if (!backgroundRef.current || !backgroundColor) return
+
+    let targetR = 31
+    let targetG = 31
+    let targetB = 31
+
+    try {
+      const c = new THREE.Color(backgroundColor)
+      targetR = Math.round(c.r * 255)
+      targetG = Math.round(c.g * 255)
+      targetB = Math.round(c.b * 255)
+    } catch (e) {
+      // fallback to neutral
     }
+
+    const tween = gsap.to(currentRgbRef.current, {
+      r: targetR,
+      g: targetG,
+      b: targetB,
+      duration: 2.5,
+      ease: 'power2.out',
+      onUpdate: () => {
+        const { r, g, b } = currentRgbRef.current
+        if (backgroundRef.current) {
+          backgroundRef.current.style.backgroundImage = `linear-gradient(to top right, #121212, rgb(${Math.round(
+            r
+          )}, ${Math.round(g)}, ${Math.round(b)}))`
+        }
+      },
+    })
+
+    return () => tween.kill()
   }, [backgroundColor])
 
   return (
@@ -140,7 +168,8 @@ const App = () => {
         ref={backgroundRef}
         className="absolute inset-0"
         style={{
-          background: `#121212`,
+          backgroundColor: '#121212',
+          backgroundImage: 'linear-gradient(to top right, #121212, #1f1f1f)',
           backgroundSize: 'cover',
           backgroundPosition: 'center',
         }}
