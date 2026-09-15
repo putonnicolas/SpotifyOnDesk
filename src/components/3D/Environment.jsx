@@ -37,7 +37,6 @@ const LeftWallShaderMaterial = shaderMaterial(
 extend({ WallShaderMaterial, LeftWallShaderMaterial })
 
 const Environment = ({ backgroundColor, energy }) => {
-  // Store the interpolated color in a single persistent THREE.Color
   const currentColorRef = useRef(new THREE.Color(backgroundColor || "#121212"))
   const tweenObj = useRef({
     r: currentColorRef.current.r,
@@ -62,25 +61,28 @@ const Environment = ({ backgroundColor, energy }) => {
   const rightWallRef = useRef()
   const backWallRef = useRef()
 
-  const applyUniformColors = () => {
+  const updateColor = () => {
     currentColorRef.current.setRGB(
       tweenObj.current.r,
       tweenObj.current.g,
       tweenObj.current.b
     )
 
-    if (topWallRef.current?.uColor) topWallRef.current.uColor.copy(currentColorRef.current)
-    if (leftWallRef.current?.uColor) leftWallRef.current.uColor.copy(currentColorRef.current)
-    if (rightWallRef.current?.uColor) rightWallRef.current.uColor.copy(currentColorRef.current)
-    if (backWallRef.current?.uColor) backWallRef.current.uColor.copy(currentColorRef.current)
+    // Convert a clone so currentColorRef itself isn't mutated in place repeatedly
+    const srgbColor = currentColorRef.current.clone().convertLinearToSRGB()
+
+    if (topWallRef.current) topWallRef.current.uColor.set(srgbColor)
+    if (leftWallRef.current) leftWallRef.current.uColor.set(srgbColor)
+    if (rightWallRef.current) rightWallRef.current.uColor.set(srgbColor)
+    if (backWallRef.current) backWallRef.current.uColor.set(srgbColor)
   }
 
   // Set initial colors on mount
   useEffect(() => {
-    applyUniformColors()
+    updateColor()
   }, [])
 
-  // Smooth color tweening without mutating or converting in-place
+  // Smooth color transition
   useEffect(() => {
     if (!backgroundColor) return
     const target = new THREE.Color(backgroundColor)
@@ -89,20 +91,20 @@ const Environment = ({ backgroundColor, energy }) => {
       r: target.r,
       g: target.g,
       b: target.b,
-      duration: 2.5,
-      ease: "power2.out",
-      onUpdate: applyUniformColors,
+      duration: 2.0,
+      ease: "power1.inOut",
+      onUpdate: updateColor,
     })
 
     return () => tween.kill()
   }, [backgroundColor])
 
-  // Smooth energy score tweening
+  // Smooth wave energy transition
   useEffect(() => {
     const tween = gsap.to(animatedEnergyRef.current, {
       value: energy,
-      duration: 2.5,
-      ease: "power2.out",
+      duration: 2.0,
+      ease: "power1.inOut",
       onUpdate: () => {
         if (leftWallRef.current) {
           leftWallRef.current.uEnergy = animatedEnergyRef.current.value
@@ -124,44 +126,42 @@ const Environment = ({ backgroundColor, energy }) => {
 
   return (
     <>
-      {/* Lights */}
-      <directionalLight
-        position={[0, 45, 0]}
-        intensity={1}
-        rotation={[-Math.PI / 2, 0, 0]}
-      />
-
-      {/* Walls */}
-      {/* Top Wall */}
-      <mesh position={[0, 45, 0]} rotation={[Math.PI / 2, 0, 0]}>
-        <planeGeometry args={[100, 100, 1, 1]} />
-        <wallShaderMaterial ref={topWallRef} />
-      </mesh>
-
-      {/* Left Wall (Noise + Dynamic Energy) */}
-      <mesh
-        rotation={[0, Math.PI / 2, 0]}
-        position={[-50, 0, 0]}
-        scale={[1, 1, 1]}
-      >
-        <planeGeometry args={[100, 100, 1, 1]} />
-        <leftWallShaderMaterial ref={leftWallRef} />
-      </mesh>
-
-      {/* Back Wall */}
-      <mesh position={[0, 0, -50]}>
-        <planeGeometry args={[100, 100, 1, 1]} />
-        <wallShaderMaterial ref={backWallRef} />
-      </mesh>
-
-      {/* Right Wall */}
-      <mesh rotation={[0, -Math.PI / 2, 0]} position={[50, 0, 0]}>
-        <planeGeometry args={[100, 100, 1, 1]} />
-        <wallShaderMaterial ref={rightWallRef} />
-      </mesh>
-
-      {/* Reflective Water Floor */}
       <Water />
+
+      {/* Walls Box - exact original position and proportions */}
+      <group position={[0, 44, 0]}>
+        {/* Left Wall with Perlin noise waves */}
+        <mesh rotation={[0, Math.PI / 2, 0]} scale={100} position={[-45, 0, 0]}>
+          <planeGeometry args={[1, 1, 8, 8]} />
+          <leftWallShaderMaterial ref={leftWallRef} />
+        </mesh>
+
+        {/* Right Wall */}
+        <mesh
+          rotation={[(3 * Math.PI) / 2, -Math.PI / 2, 0]}
+          scale={100}
+          position={[45, 0, 0]}
+        >
+          <planeGeometry />
+          <wallShaderMaterial ref={rightWallRef} />
+        </mesh>
+
+        {/* Back Wall */}
+        <mesh scale={100} position={[0, 0, -45]}>
+          <planeGeometry />
+          <wallShaderMaterial ref={backWallRef} />
+        </mesh>
+
+        {/* Top Wall */}
+        <mesh
+          rotation={[Math.PI / 2, 0, (3 * Math.PI) / 2]}
+          scale={100}
+          position={[0, 44, 0]}
+        >
+          <planeGeometry />
+          <wallShaderMaterial ref={topWallRef} />
+        </mesh>
+      </group>
     </>
   )
 }

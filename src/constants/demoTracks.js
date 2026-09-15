@@ -24,31 +24,6 @@ export const demoTracks = [
   {
     id: 'demo-2',
     item: {
-      id: 'demo-swan-lake',
-      name: 'Le Lac des cygnes, Op. 20: Scene',
-      artists: [
-        { id: 'artist-tchaikovsky', name: 'Piotr Ilitch Tchaïkovski' },
-        { id: 'artist-wiener', name: 'Orchestre Philharmonique de Vienne' },
-      ],
-      album: {
-        name: 'Tchaikovsky: Swan Lake',
-        images: [
-          {
-            url: 'https://is1-ssl.mzstatic.com/image/thumb/Music124/v4/48/c5/e2/48c5e2ab-3cd3-74c6-7a2a-3e1493dae3b8/00028947856948.rgb.jpg/600x600bb.jpg',
-          },
-        ],
-      },
-      duration_ms: 194000,
-    },
-    progress_ms: 68000,
-    artistImage: {
-      url: 'https://is1-ssl.mzstatic.com/image/thumb/Music124/v4/48/c5/e2/48c5e2ab-3cd3-74c6-7a2a-3e1493dae3b8/00028947856948.rgb.jpg/600x600bb.jpg',
-    },
-    energy: 0.72,
-  },
-  {
-    id: 'demo-3',
-    item: {
       id: 'demo-favorite-crime',
       name: 'favorite crime',
       artists: [{ id: 'artist-olivia', name: 'Olivia Rodrigo' }],
@@ -69,7 +44,7 @@ export const demoTracks = [
     energy: 0.35,
   },
   {
-    id: 'demo-4',
+    id: 'demo-3',
     item: {
       id: 'demo-someday',
       name: 'Someday',
