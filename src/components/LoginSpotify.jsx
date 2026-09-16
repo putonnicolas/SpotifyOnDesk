@@ -3,7 +3,7 @@ import { redirectToSpotifyAuth } from '../services/spotifyAuth'
 
 const LoginSpotify = ({ error, onStartDemo }) => {
   return (
-    <div className="flexButtonContainer flex-col items-center gap-6 px-4 max-w-xl mx-auto text-center">
+    <div className="flex flex-col items-center gap-6 w-full max-w-xl mx-auto text-center">
       {error && (
         <div className="bg-red-500/20 border border-red-500/50 text-red-200 px-4 py-3 rounded-xl text-sm w-full text-left">
           <p className="font-semibold mb-1">Information API Spotify :</p>
@@ -12,7 +12,7 @@ const LoginSpotify = ({ error, onStartDemo }) => {
       )}
 
       {/* Recruiter / Visitor Notice */}
-      <div className="bg-white/5 border border-white/10 rounded-2xl p-5 backdrop-blur-sm text-sm text-gray-300 leading-relaxed shadow-lg">
+      <div className="bg-white/5 border border-white/10 rounded-2xl p-5 backdrop-blur-sm text-sm text-gray-300 leading-relaxed shadow-lg w-full">
         <div className="flex items-center justify-center gap-2 mb-2 text-white font-medium text-base">
           <span>✨</span>
           <span>Espace Découverte & Portfolio</span>

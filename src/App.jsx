@@ -186,20 +186,18 @@ const App = () => {
           onExitDemo={handleExitDemo}
         />
       ) : (
-        <div className="relative z-10 flex-1">
-          <div className="home">
-            <Navbar showButton={false} />
+        <div className="relative z-10 min-h-screen flex flex-col justify-between">
+          <Navbar showButton={false} />
+          <main className="flex-1 flex flex-col items-center justify-center px-4 py-8">
             {authLoading ? (
-              <div className="flexButtonContainer">
-                <p className="text-gray-400 animate-pulse text-lg">
-                  Connecting to Spotify...
-                </p>
-              </div>
+              <p className="text-gray-400 animate-pulse text-lg">
+                Connecting to Spotify...
+              </p>
             ) : (
               <LoginSpotify error={authError} onStartDemo={handleStartDemo} />
             )}
-            <Footer />
-          </div>
+          </main>
+          <Footer />
         </div>
       )}
     </div>
