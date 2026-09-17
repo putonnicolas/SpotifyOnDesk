@@ -22,13 +22,14 @@ const App = () => {
   const [isDemo, setIsDemo] = useState(false)
   const [demoIndex, setDemoIndex] = useState(0)
 
-  const { backgroundColor } = useBackground()
+  const { backgroundColor, setBackgroundColor } = useBackground()
   const backgroundRef = useRef(null)
 
   const handleLogout = () => {
     logout()
     setToken(null)
     setUserData(null)
+    setBackgroundColor('#1f1f1f')
   }
 
   const handleStartDemo = () => {
@@ -37,7 +38,15 @@ const App = () => {
 
   const handleExitDemo = () => {
     setIsDemo(false)
+    setBackgroundColor('#1f1f1f')
   }
+
+  // Ensure background resets to default neutral gray on menu
+  useEffect(() => {
+    if (!token && !isDemo) {
+      setBackgroundColor('#1f1f1f')
+    }
+  }, [token, isDemo, setBackgroundColor])
 
   const authInitializedRef = useRef(false)
 
