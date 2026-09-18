@@ -12,10 +12,10 @@ const Footer = () => {
         <div className="Links">
           <ul>
             <li>
-              <a href="https://github.com/putonnicolas">GitHub</a>
+              <a href="https://github.com/putonnicolas" target="_blank" rel="noopener noreferrer">GitHub</a>
             </li>
-            <li className="unavailable">
-              <a href="">LinkedIn</a>
+            <li>
+              <a href="https://www.linkedin.com/in/nicolas-puton/" target="_blank" rel="noopener noreferrer">LinkedIn</a>
             </li>
             <li className="unavailable">
               <a href="">Portfolio</a>
