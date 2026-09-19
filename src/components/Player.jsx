@@ -214,10 +214,10 @@ const Player = ({
       {/* Floating Demo Toolbar for recruiters & visitors */}
       {isDemo && (
         <>
-          <div className="fixed bottom-6 left-1/2 -translate-x-1/2 z-30 bg-black/85 backdrop-blur-md border border-white/20 rounded-2xl px-4 py-2.5 shadow-2xl flex flex-wrap items-center justify-center gap-2.5 max-w-[95vw]">
+          <div className="fixed bottom-3 sm:bottom-6 left-1/2 -translate-x-1/2 z-30 bg-black/85 backdrop-blur-md border border-white/20 rounded-xl sm:rounded-2xl px-3 sm:px-4 py-2 sm:py-2.5 shadow-2xl flex flex-wrap items-center justify-center gap-2 sm:gap-2.5 max-w-[96vw]">
             <div className="flex items-center gap-1.5">
               <span className="inline-block w-2 h-2 rounded-full bg-green-400 animate-pulse" />
-              <span className="text-[11px] uppercase tracking-wider text-green-400 font-semibold">
+              <span className="text-[10px] sm:text-[11px] uppercase tracking-wider text-green-400 font-semibold">
                 Démo
               </span>
             </div>
@@ -227,7 +227,7 @@ const Player = ({
             {/* Live Search Trigger Button */}
             <button
               onClick={() => setShowSearch(true)}
-              className="text-xs px-3 py-1.5 rounded-lg bg-emerald-500/20 text-emerald-300 border border-emerald-500/40 hover:bg-emerald-500/30 transition-all duration-200 flex items-center gap-1.5 select-none"
+              className="text-[11px] sm:text-xs px-2.5 sm:px-3 py-1.5 rounded-lg bg-emerald-500/20 text-emerald-300 border border-emerald-500/40 hover:bg-emerald-500/30 transition-all duration-200 flex items-center gap-1.5 select-none"
             >
               <span>🔍</span>
               <span className="font-medium">Chercher un titre...</span>
@@ -246,7 +246,7 @@ const Player = ({
                       setCustomTrack(null)
                       onSelectDemoIndex(idx)
                     }}
-                    className={`text-xs px-2.5 py-1.5 rounded-lg transition-all duration-200 select-none ${
+                    className={`text-[11px] sm:text-xs px-2 sm:px-2.5 py-1 sm:py-1.5 rounded-lg transition-all duration-200 select-none ${
                       isSelected
                         ? 'bg-white text-black font-semibold shadow'
                         : 'bg-white/10 text-gray-300 hover:bg-white/20 hover:text-white'
@@ -263,7 +263,7 @@ const Player = ({
             {onExitDemo && (
               <button
                 onClick={onExitDemo}
-                className="text-xs text-gray-400 hover:text-white underline underline-offset-2 transition-colors select-none"
+                className="text-[11px] sm:text-xs text-gray-400 hover:text-white underline underline-offset-2 transition-colors select-none"
               >
                 Quitter
               </button>

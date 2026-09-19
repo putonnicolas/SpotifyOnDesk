@@ -10,13 +10,11 @@ import {
   getValidAccessToken,
   handleAuthCallback,
   logout,
-  spotifyApi,
 } from './services/spotifyAuth'
 import { demoTracks } from './constants/demoTracks'
 
 const App = () => {
   const [token, setToken] = useState(null)
-  const [userData, setUserData] = useState(null)
   const [authLoading, setAuthLoading] = useState(true)
   const [authError, setAuthError] = useState(null)
   const [isDemo, setIsDemo] = useState(false)
@@ -28,7 +26,6 @@ const App = () => {
   const handleLogout = () => {
     logout()
     setToken(null)
-    setUserData(null)
     setBackgroundColor('#1f1f1f')
   }
 
@@ -117,22 +114,6 @@ const App = () => {
     return () => clearInterval(intervalId)
   }, [token])
 
-  // Optional background user profile check (non-blocking)
-  useEffect(() => {
-    if (token) {
-      spotifyApi
-        .get('/me')
-        .then((response) => {
-          setUserData(response.data)
-        })
-        .catch((error) => {
-          console.warn('User profile /me endpoint returned error:', error?.response?.status || error)
-          if (error.response && error.response.status === 401) {
-            handleLogout()
-          }
-        })
-    }
-  }, [token])
 
   const currentRgbRef = useRef({ r: 31, g: 31, b: 31 })
 

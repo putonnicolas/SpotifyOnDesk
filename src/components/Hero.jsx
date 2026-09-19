@@ -21,7 +21,7 @@ const Hero = ({ listeningData, artistImage }) => {
             alt="Album cover"
           />
         ) : (
-          <div className="image bg-gray-800 flex items-center justify-center text-gray-500">
+          <div className="image bg-gray-800 flex items-center justify-center text-gray-500 aspect-square w-60 rounded-xl">
             No Cover
           </div>
         )}
@@ -29,29 +29,29 @@ const Hero = ({ listeningData, artistImage }) => {
 
       {/* Streaming info */}
       <div className="songInfo">
-        <p className="songName font-semibold text-3xl truncate-text">
+        <p className="songName font-semibold text-2xl sm:text-3xl truncate-text text-center md:text-left">
           {songName}
         </p>
 
-        <div className="artistContainer">
+        <div className="artistContainer flex items-center justify-center md:justify-start gap-3 sm:gap-4 my-2 sm:my-3">
           {artistImage?.url ? (
             <img
               src={artistImage.url}
-              className="rounded-full size-16 object-cover"
+              className="rounded-full size-12 sm:size-16 object-cover flex-shrink-0"
               alt="Artist"
             />
           ) : (
-            <div className="rounded-full size-16 bg-gray-700 flex items-center justify-center text-xs text-gray-400">
+            <div className="rounded-full size-12 sm:size-16 bg-gray-700 flex items-center justify-center text-xs text-gray-400 flex-shrink-0">
               Artist
             </div>
           )}
-          <div className="artistAlbumInfo flex-1 truncate-text">
-            <p className="artistName font-light text-gray-400 truncate-text text-xl">
-              <strong>{artists}</strong>
+          <div className="artistAlbumInfo flex-1 min-w-0 truncate-text">
+            <p className="artistName font-light text-gray-400 truncate-text text-sm sm:text-lg">
+              <strong className="text-white font-medium">{artists}</strong>
               {albumName && (
                 <>
                   {" · "}
-                  <span className="albumName font-extralight text-gray-400 truncate-text">
+                  <span className="albumName font-extralight text-gray-400">
                     {albumName}
                   </span>
                 </>

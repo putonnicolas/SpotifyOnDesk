@@ -3,10 +3,10 @@
 @tailwind components;
 @tailwind utilities;
 
-
 body, html {
   @apply font-poppins;
-  overflow: hidden;
+  overflow-x: hidden;
+  min-height: 100%;
 }
 
 .fade-out-hr {
@@ -15,11 +15,11 @@ body, html {
 }
 
 .dimension-btn-container {
-  @apply flex items-center justify-center p-1 rounded-full bg-gray-300 backdrop-blur ml-3 gap-1
+  @apply flex items-center justify-center p-1 rounded-full bg-gray-300 backdrop-blur ml-3 gap-1;
 }
 
 .dimension-btn {
-  @apply w-10 h-10 text-sm flex justify-center items-center bg-white text-black rounded-full transition-all
+  @apply w-10 h-10 text-sm flex justify-center items-center bg-white text-black rounded-full transition-all;
 }
 
 .truncate-text {
@@ -28,44 +28,87 @@ body, html {
   text-overflow: ellipsis; 
 }
 
+/* 2D Hero Responsive Layout */
 .hero2D {
-  flex-direction: row;
   display: flex;
+  flex-direction: column;
+  align-items: center;
   justify-content: center;
-  height: 70vh;
-  margin-top: 2em;
-  min-height: 60%;
+  width: 100%;
+  padding: 1rem;
+  padding-bottom: 7rem; /* room for mobile floating toolbar */
+  box-sizing: border-box;
+}
+
+@media (min-width: 768px) {
+  .hero2D {
+    flex-direction: row;
+    align-items: flex-end;
+    justify-content: center;
+    height: 70vh;
+    min-height: 60%;
+    margin-top: 2em;
+    padding-bottom: 2rem;
+  }
 }
 
 .albumContainer {
-  height: 100%;
   display: flex;
-  justify-content: flex-end;
-  align-items: end;
-  width: auto;
-  margin-left: 2em;
-  margin-right: 2em;
-  margin-bottom: 2em;
-  flex-basis: auto; 
-  flex-grow: 0;
-  flex-shrink: 0; 
+  justify-content: center;
+  align-items: center;
+  width: 100%;
+  max-width: 280px;
+  margin: 1rem auto;
+}
+
+@media (min-width: 768px) {
+  .albumContainer {
+    height: 100%;
+    width: auto;
+    max-width: none;
+    justify-content: flex-end;
+    align-items: flex-end;
+    margin: 0 2em 2em 2em;
+  }
 }
 
 .albumContainer img {
-  border-radius: 5%;
-  max-width: 100%;
-  max-height: 100%;
-  object-fit: scale-down;
+  border-radius: 12px;
+  width: 100%;
+  max-width: 260px;
+  max-height: 260px;
+  aspect-ratio: 1 / 1;
+  object-fit: cover;
+  box-shadow: 0 10px 25px rgba(0, 0, 0, 0.4);
+}
+
+@media (min-width: 768px) {
+  .albumContainer img {
+    max-width: 100%;
+    max-height: 100%;
+    aspect-ratio: auto;
+    object-fit: scale-down;
+    box-shadow: none;
+  }
 }
 
 .songInfo {
   display: flex;
   flex-direction: column;
-  justify-content: flex-end;
-  flex-grow: 2;
-  flex-shrink: 3;
-  margin-right: 2em;
-  max-width: 60%; 
+  justify-content: center;
+  width: 100%;
+  max-width: 92%;
+  margin: 0 auto;
+}
+
+@media (min-width: 768px) {
+  .songInfo {
+    justify-content: flex-end;
+    flex-grow: 2;
+    flex-shrink: 3;
+    max-width: 60%;
+    margin-right: 2em;
+  }
 }
 
 .songName {
@@ -75,10 +118,9 @@ body, html {
 .artistContainer {
   display: flex;
   flex-direction: row;
-  justify-content: flex-start;
   align-items: center;
-  gap: 1.5em;
-  margin-top: 1em;
+  gap: 1rem;
+  margin-top: 0.75rem;
   max-width: 100%;
 }
 
@@ -89,37 +131,23 @@ body, html {
   max-width: 100%;
 }
 
-
-
 .player {
-  position: fixed;
-  height: 100%;
+  min-height: 100vh;
   width: 100%;
-  min-height: 200px;
   display: flex;
   flex-direction: column;
-  justify-items: center;
+  justify-content: space-between;
+  overflow-x: hidden;
+  overflow-y: auto;
+  position: relative;
 }
 
-/* Home page */
-
+/* Home page footer */
 .footer {
-  left: 0;
-  bottom: 0;
-  width: calc(100% - 2rem); 
-  margin: 1rem; 
-  background: #212121;
-  padding: 1rem; 
-  border-radius: 1rem; 
-  z-index: 10;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  box-sizing: border-box; 
+  box-sizing: border-box;
 }
 
 .Links {
-  margin-right: 2em;
   text-decoration: underline;
   text-underline-offset: 0.2em;
 }
@@ -133,27 +161,15 @@ body, html {
 
 .home {
   display: flex;
-  height: 100vh;
+  min-height: 100vh;
   flex-direction: column;
-  justify-content: flex-end;
+  justify-content: space-between;
 }
 
-/* button */
-.flexButtonContainer {
-  flex-grow: 2;
-  flex-shrink: 2;
-  display: flex;
-  position: fixed;
-  justify-content: center; 
-  align-items: center; 
-  height: 100%; 
-  width: 100vw; 
-  margin: 0; 
-}
-
+/* Glow button styles */
 .glowing {
-  margin: 100px;
-  padding: 15px 40px;
+  margin: 10px;
+  padding: 12px 30px;
   border: none;
   outline: none;
   color: #FFF;
@@ -212,11 +228,11 @@ body, html {
 
 .glowing:hover::before {
   opacity: 1;
-  transform: scale(1.1);
+  transform: scale(1.05);
 }
 
 .glowing:hover {
-  transform: scale(1.1);
+  transform: scale(1.05);
 }
 
 .glowing:active::after {
@@ -229,11 +245,5 @@ body, html {
 }
 
 .glowing:hover .Spotify {
-  text-shadow: 0 0 5px #ffffff, 0 0 10px #ffffff, 0 0 15px #56d757, 0 0 20px #56d757, 0 0 25px #56d757, 0 0 30px #56d757, 0 0 35px #56d757;
-}
-
-.truncate-text {
-  white-space: nowrap;
-  overflow: hidden;    
-  text-overflow: ellipsis;
+  text-shadow: 0 0 5px #ffffff, 0 0 10px #ffffff, 0 0 15px #56d757, 0 0 20px #56d757;
 }
