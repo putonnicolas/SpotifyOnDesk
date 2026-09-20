@@ -30,65 +30,44 @@ body, html {
 
 /* 2D Hero Responsive Layout */
 .hero2D {
+  flex: 1;
   display: flex;
   flex-direction: column;
   align-items: center;
   justify-content: center;
   width: 100%;
-  padding: 1rem;
-  padding-bottom: 7rem; /* room for mobile floating toolbar */
+  padding: 1.5rem;
+  padding-bottom: 6rem; /* Ensures ample clearance for the fixed demo bar */
   box-sizing: border-box;
-}
-
-@media (min-width: 768px) {
-  .hero2D {
-    flex-direction: row;
-    align-items: flex-end;
-    justify-content: center;
-    height: 70vh;
-    min-height: 60%;
-    margin-top: 2em;
-    padding-bottom: 2rem;
-  }
 }
 
 .albumContainer {
   display: flex;
   justify-content: center;
   align-items: center;
-  width: 100%;
-  max-width: 280px;
-  margin: 1rem auto;
-}
-
-@media (min-width: 768px) {
-  .albumContainer {
-    height: 100%;
-    width: auto;
-    max-width: none;
-    justify-content: flex-end;
-    align-items: flex-end;
-    margin: 0 2em 2em 2em;
-  }
+  flex-shrink: 0;
 }
 
 .albumContainer img {
-  border-radius: 12px;
-  width: 100%;
-  max-width: 260px;
-  max-height: 260px;
+  border-radius: 1rem;
+  width: 220px;
+  height: 220px;
   aspect-ratio: 1 / 1;
   object-fit: cover;
-  box-shadow: 0 10px 25px rgba(0, 0, 0, 0.4);
+  box-shadow: 0 16px 36px rgba(0, 0, 0, 0.45);
 }
 
-@media (min-width: 768px) {
+@media (min-width: 640px) {
   .albumContainer img {
-    max-width: 100%;
-    max-height: 100%;
-    aspect-ratio: auto;
-    object-fit: scale-down;
-    box-shadow: none;
+    width: 260px;
+    height: 260px;
+  }
+}
+
+@media (min-width: 1024px) {
+  .albumContainer img {
+    width: 300px;
+    height: 300px;
   }
 }
 
@@ -97,17 +76,12 @@ body, html {
   flex-direction: column;
   justify-content: center;
   width: 100%;
-  max-width: 92%;
-  margin: 0 auto;
+  max-width: 440px;
 }
 
-@media (min-width: 768px) {
+@media (min-width: 1024px) {
   .songInfo {
-    justify-content: flex-end;
-    flex-grow: 2;
-    flex-shrink: 3;
-    max-width: 60%;
-    margin-right: 2em;
+    max-width: 500px;
   }
 }
 
@@ -132,6 +106,7 @@ body, html {
 }
 
 .player {
+  height: 100vh;
   min-height: 100vh;
   width: 100%;
   display: flex;
