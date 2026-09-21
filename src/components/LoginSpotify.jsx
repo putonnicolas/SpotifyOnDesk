@@ -17,10 +17,11 @@ const LoginSpotify = ({ error, onStartDemo }) => {
           <span>✨</span>
           <span>Espace Découverte & Portfolio</span>
         </div>
+        <p className="text-gray-300 text-xs sm:text-sm mb-2.5">
+          Pour synchroniser votre compte Spotify en direct, <strong>contactez-moi pour être ajouté à la liste autorisée</strong> (restriction de l'API en mode développement).
+        </p>
         <p className="text-gray-400 text-xs sm:text-sm">
-          Pour des raisons de sécurité, l'API Spotify restreint les applications en mode développement à une liste fermée d'utilisateurs. 
-          <br className="hidden sm:block" />
-          Le <strong>Mode Démo</strong> vous permet de tester immédiatement l'intégralité du projet (visualisation 2D, shaders 3D Three.js, extraction de couleurs ColorThief, animations GSAP) sans nécessiter de compte Spotify.
+          Le <strong>Mode Démo</strong> vous permet de tester immédiatement l'expérience : l'<strong>environnement 3D réagit au rythme de la musique</strong> et les <strong>couleurs s'animent en transitions douces</strong> à partir des pochettes d'albums.
         </p>
       </div>
 
