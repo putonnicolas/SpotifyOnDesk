@@ -144,11 +144,13 @@ const App = () => {
         const roundedR = Math.round(r)
         const roundedG = Math.round(g)
         const roundedB = Math.round(b)
+        const gradient = `linear-gradient(to top right, #121212, rgb(${roundedR}, ${roundedG}, ${roundedB}))`
+
         if (backgroundRef.current) {
-          backgroundRef.current.style.backgroundImage = `linear-gradient(to top right, #121212, rgb(${roundedR}, ${roundedG}, ${roundedB}))`
+          backgroundRef.current.style.backgroundImage = gradient
         }
-        document.body.style.backgroundColor = '#121212'
-        document.documentElement.style.backgroundColor = '#121212'
+        document.body.style.background = gradient
+        document.documentElement.style.background = gradient
 
         const metaThemeColor = document.querySelector('meta[name="theme-color"]')
         if (metaThemeColor) {
@@ -164,7 +166,7 @@ const App = () => {
     <div className="min-h-screen text-white relative">
       <div
         ref={backgroundRef}
-        className="fixed inset-0 pointer-events-none -z-10"
+        className="fixed inset-0 pointer-events-none z-0"
         style={{
           backgroundColor: '#121212',
           backgroundImage: 'linear-gradient(to top right, #121212, #1f1f1f)',
@@ -173,31 +175,33 @@ const App = () => {
         }}
       />
 
-      {token || isDemo ? (
-        <Player
-          token={token}
-          onLogout={handleLogout}
-          isDemo={isDemo}
-          demoTracks={demoTracks}
-          demoIndex={demoIndex}
-          onSelectDemoIndex={setDemoIndex}
-          onExitDemo={handleExitDemo}
-        />
-      ) : (
-        <div className="relative z-10 min-h-screen flex flex-col justify-between">
-          <Navbar showButton={false} />
-          <main className="flex-1 flex flex-col items-center justify-center px-4 py-8">
-            {authLoading ? (
-              <p className="text-gray-400 animate-pulse text-lg">
-                Connecting to Spotify...
-              </p>
-            ) : (
-              <LoginSpotify error={authError} onStartDemo={handleStartDemo} />
-            )}
-          </main>
-          <Footer />
-        </div>
-      )}
+      <div className="relative z-10 min-h-screen">
+        {token || isDemo ? (
+          <Player
+            token={token}
+            onLogout={handleLogout}
+            isDemo={isDemo}
+            demoTracks={demoTracks}
+            demoIndex={demoIndex}
+            onSelectDemoIndex={setDemoIndex}
+            onExitDemo={handleExitDemo}
+          />
+        ) : (
+          <div className="min-h-screen flex flex-col justify-between">
+            <Navbar showButton={false} />
+            <main className="flex-1 flex flex-col items-center justify-center px-4 py-8">
+              {authLoading ? (
+                <p className="text-gray-400 animate-pulse text-lg">
+                  Connecting to Spotify...
+                </p>
+              ) : (
+                <LoginSpotify error={authError} onStartDemo={handleStartDemo} />
+              )}
+            </main>
+            <Footer />
+          </div>
+        )}
+      </div>
     </div>
   )
 }

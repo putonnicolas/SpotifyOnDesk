@@ -8,8 +8,9 @@ body, html {
   background-color: #121212;
   color: #ffffff;
   overflow-x: hidden;
-  overscroll-behavior-y: none;
   min-height: 100%;
+  margin: 0;
+  padding: 0;
 }
 
 .fade-out-hr {
