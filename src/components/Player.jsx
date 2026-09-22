@@ -218,7 +218,7 @@ const Player = ({
             <div className="flex items-center gap-1.5">
               <span className="inline-block w-2 h-2 rounded-full bg-green-400 animate-pulse" />
               <span className="text-[10px] sm:text-[11px] uppercase tracking-wider text-green-400 font-semibold">
-                Démo
+                Demo
               </span>
             </div>
 
@@ -230,7 +230,7 @@ const Player = ({
               className="text-[11px] sm:text-xs px-2.5 sm:px-3 py-1.5 rounded-lg bg-emerald-500/20 text-emerald-300 border border-emerald-500/40 hover:bg-emerald-500/30 transition-all duration-200 flex items-center gap-1.5 select-none"
             >
               <span>🔍</span>
-              <span className="font-medium">Chercher un titre...</span>
+              <span className="font-medium">Search any track...</span>
             </button>
 
             <div className="h-4 w-px bg-white/20 hidden sm:block" />
@@ -265,7 +265,7 @@ const Player = ({
                 onClick={onExitDemo}
                 className="text-[11px] sm:text-xs text-gray-400 hover:text-white underline underline-offset-2 transition-colors select-none"
               >
-                Quitter
+                Exit Demo
               </button>
             )}
           </div>
@@ -279,7 +279,7 @@ const Player = ({
                   <div className="flex items-center gap-2">
                     <span className="text-xl">🔍</span>
                     <h3 className="font-semibold text-white text-base">
-                      Rechercher n'importe quelle musique
+                      Search Any Track or Artist
                     </h3>
                   </div>
                   <button
@@ -296,12 +296,12 @@ const Player = ({
                     type="text"
                     value={searchQuery}
                     onChange={handleSearchChange}
-                    placeholder="Tapez un titre ou un artiste (ex: Daft Punk, Queen, Billie Eilish...)"
+                    placeholder="Type a track or artist name (e.g. Daft Punk, Queen, Billie Eilish...)"
                     autoFocus
                     className="w-full bg-white/10 border border-white/20 rounded-xl px-4 py-3 text-white placeholder-gray-400 focus:outline-none focus:border-green-500 text-sm"
                   />
                   <p className="text-[11px] text-gray-400 mt-2">
-                    💡 Recherche en direct sans compte ni clé API avec pochettes HD et extraction de couleur automatique.
+                    💡 Instant live search with HD album covers and real-time color extraction. No account required.
                   </p>
                 </div>
 
@@ -309,13 +309,13 @@ const Player = ({
                 <div className="flex-1 overflow-y-auto p-3 space-y-2">
                   {isSearching && (
                     <div className="text-center py-8 text-gray-400 text-sm animate-pulse">
-                      Recherche en cours...
+                      Searching tracks...
                     </div>
                   )}
 
                   {!isSearching && searchQuery && searchResults.length === 0 && (
                     <div className="text-center py-8 text-gray-400 text-sm">
-                      Aucun morceau trouvé pour cette recherche.
+                      No tracks found for this search.
                     </div>
                   )}
 
@@ -338,8 +338,8 @@ const Player = ({
                           {result.item.artists[0]?.name} · {result.item.album.name}
                         </p>
                       </div>
-                      <span className="text-xs text-green-400 font-medium px-2 py-1 rounded bg-green-500/10 border border-green-500/20">
-                        Charger
+                      <span className="text-xs text-green-400 font-medium px-2.5 py-1 rounded-lg bg-green-500/10 border border-green-500/20">
+                        Play
                       </span>
                     </div>
                   ))}

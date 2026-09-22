@@ -8,7 +8,7 @@ const Footer = () => {
         affiliated with{" "}
         <a
           className="underline underline-offset-2 hover:text-white transition-colors"
-          href="https://www.spotify.com/fr/"
+          href="https://www.spotify.com/"
           target="_blank"
           rel="noopener noreferrer"
         >
