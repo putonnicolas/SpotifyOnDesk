@@ -141,10 +141,18 @@ const App = () => {
       ease: 'power2.out',
       onUpdate: () => {
         const { r, g, b } = currentRgbRef.current
+        const roundedR = Math.round(r)
+        const roundedG = Math.round(g)
+        const roundedB = Math.round(b)
         if (backgroundRef.current) {
-          backgroundRef.current.style.backgroundImage = `linear-gradient(to top right, #121212, rgb(${Math.round(
-            r
-          )}, ${Math.round(g)}, ${Math.round(b)}))`
+          backgroundRef.current.style.backgroundImage = `linear-gradient(to top right, #121212, rgb(${roundedR}, ${roundedG}, ${roundedB}))`
+        }
+        document.body.style.backgroundColor = '#121212'
+        document.documentElement.style.backgroundColor = '#121212'
+
+        const metaThemeColor = document.querySelector('meta[name="theme-color"]')
+        if (metaThemeColor) {
+          metaThemeColor.setAttribute('content', `rgb(${roundedR}, ${roundedG}, ${roundedB})`)
         }
       },
     })
@@ -156,7 +164,7 @@ const App = () => {
     <div className="min-h-screen text-white relative">
       <div
         ref={backgroundRef}
-        className="absolute inset-0"
+        className="fixed inset-0 pointer-events-none -z-10"
         style={{
           backgroundColor: '#121212',
           backgroundImage: 'linear-gradient(to top right, #121212, #1f1f1f)',

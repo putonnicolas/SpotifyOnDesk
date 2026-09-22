@@ -5,7 +5,10 @@
 
 body, html {
   @apply font-poppins;
+  background-color: #121212;
+  color: #ffffff;
   overflow-x: hidden;
+  overscroll-behavior-y: none;
   min-height: 100%;
 }
 
